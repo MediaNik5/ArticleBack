@@ -1,13 +1,11 @@
-package org.catblocks.articleback;
+package org.catblocks.articleback
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.Test
+import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
-class ArticleBackApplicationTests {
-
+internal class ArticleBackApplicationTests {
     @Test
-    void contextLoads() {
+    fun contextLoads() {
     }
-
 }

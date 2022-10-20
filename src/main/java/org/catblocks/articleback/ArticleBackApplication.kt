@@ -1,13 +1,12 @@
-package org.catblocks.articleback;
+package org.catblocks.articleback
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.SpringApplication
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.runApplication
 
 @SpringBootApplication
-public class ArticleBackApplication {
+class ArticleBackApplication
 
-    public static void main(String[] args) {
-        SpringApplication.run(ArticleBackApplication.class, args);
-    }
-
+fun main(args: Array<String>) {
+    runApplication<ArticleBackApplication>(*args);
 }
