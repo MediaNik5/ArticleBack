@@ -226,6 +226,26 @@ paths:
           description: Requested article is not found
       security:
         - bearerAuth: [ ]
+    post:
+      tags:
+        - article-statistics
+      summary: Set read progress
+      description: Set read progress
+      operationId: addReadProgress
+      requestBody:
+        description: Set read progress
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateArticleReadProgressRequest'
+        required: true
+      responses:
+        '200':
+          description: Successfully saved read progress
+        '400':
+          description: Invalid request
+        '404':
+          description: Requested article is not found
   /articles-statistics/{articleId}/reactions:
     get:
       tags:
@@ -486,3 +506,17 @@ components:
         avatar:
           type: string
           description: Image url
+    UpdateArticleReadProgressRequest:
+      type: object
+      properties:
+        articleId:
+          type: integer
+          format: int64
+        readProgress:
+          type: integer
+          format: int32
+          description: Read progress in percents
+        duration:
+          type: integer
+          format: int32
+          description: Read duration in microseconds
