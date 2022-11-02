@@ -33,7 +33,7 @@ class TokenProvider(
         val expiryDate = Date(now.time + tokenExpirationMsec)
         val key: Key = SecretKeySpec(tokenSecret, SignatureAlgorithm.HS512.jcaName)
         return Jwts.builder()
-            .setSubject(userPrincipal.username)
+            .setSubject(userPrincipal.id)
             .setIssuedAt(now)
             .setExpiration(expiryDate)
             .signWith(key)
