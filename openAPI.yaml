@@ -51,7 +51,8 @@ paths:
             type: string
             enum:
               - TITLE
-              - VIEWS
+              - CREATED
+              - UPDATED
           required: false
         - in: query
           name: sortDirection
@@ -406,7 +407,7 @@ components:
     ShortArticleResponse:
       type: object
       properties:
-        articleId:
+        id:
           type: integer
           format: int64
         title:
