@@ -1,0 +1,479 @@
+openapi: 3.0.3
+info:
+  title: Swagger Article web-service - OpenAPI 3.0
+  description: |-
+    This is documentation for article web-service
+  version: 1.0.0
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+tags:
+  - name: articles
+    description: Everything about articles
+  - name: users
+    description: Everything about users
+  - name: article-statistics
+    description: Everything about statistics
+paths:
+  /articles:
+    post:
+      tags:
+        - articles
+      summary: Create new article
+      description: Create new article
+      operationId: createArticle
+      requestBody:
+        description: Create new article
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewArticleRequest'
+        required: true
+      responses:
+        '200':
+          description: Article is created successfully
+        '400':
+          description: Invalid request body
+        '405':
+          description: Validation exception
+      security:
+        - bearerAuth: [ ]
+    get:
+      tags:
+        - articles
+      summary: Get all articles
+      description: Get all articles
+      operationId: getAllArticles
+      parameters:
+        - in: query
+          name: sortBy
+          schema:
+            type: string
+            enum:
+              - TITLE
+              - VIEWS
+          required: false
+        - in: query
+          name: sortDirection
+          schema:
+            type: string
+            enum:
+              - ASC
+              - DESC
+          required: false
+        - in: query
+          name: page
+          schema:
+            type: integer
+            format: int32
+          required: false
+        - in: query
+          name: size
+          schema:
+            type: integer
+            format: int32
+          required: false
+      responses:
+        '200':
+          description: Articles are retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArticlesResponse'
+        '400':
+          description: Invalid request body
+        '404':
+          description: Article not found
+      security:
+        - bearerAuth: [ ]
+  /articles/{articleId}:
+    get:
+      tags:
+        - articles
+      summary: Get article by id
+      description: Get article by id
+      operationId: getArticleById
+      parameters:
+        - in: path
+          name: articleId
+          schema:
+            type: integer
+            format: int64
+          required: true
+      responses:
+        '200':
+          description: Article is retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArticleResponse'
+        '400':
+          description: Invalid article id
+        '404':
+          description: Requested article is not found
+      security:
+        - bearerAuth: [ ]
+    put:
+      tags:
+        - articles
+      summary: Update article
+      description: Update article
+      operationId: updateArticle
+      requestBody:
+        description: Update article
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateArticleRequest'
+        required: true
+      responses:
+        '200':
+          description: Article is updated successfully
+        '400':
+          description: Invalid request body
+        '404':
+          description: Article not found
+        '405':
+          description: Validation exception
+      security:
+        - bearerAuth: [ ]
+    delete:
+      tags:
+        - articles
+      summary: Delete article
+      description: Delete article
+      operationId: deleteArticle
+      parameters:
+        - in: path
+          name: articleId
+          schema:
+            type: integer
+            format: int64
+          required: true
+      responses:
+        '200':
+          description: Article is deleted successfully
+        '400':
+          description: Invalid article id
+        '404':
+          description: Requested article is not found
+      security:
+        - bearerAuth: [ ]
+  /articles/{articleId}/access:
+    put:
+      tags:
+        - articles
+      summary: Update article access
+      description: Update article access
+      operationId: updateArticleAccess
+      parameters:
+        - in: path
+          name: articleId
+          schema:
+            type: integer
+            format: int64
+          required: true
+      requestBody:
+        description: Update article access
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateArticleAccessRequest'
+        required: true
+      responses:
+        '200':
+          description: Article access is updated successfully
+        '400':
+          description: Invalid request body
+        '404':
+          description: Article not found
+        '405':
+          description: Validation exception
+      security:
+        - bearerAuth: [ ]
+  /articles-statistics/{articleId}/read-progress:
+    get:
+      tags:
+        - article-statistics
+      summary: Get article read progresses
+      description: Get article read progresses
+      operationId: getArticleReadProgress
+      parameters:
+        - in: path
+          name: articleId
+          schema:
+            type: integer
+            format: int64
+          required: true
+        - in: query
+          name: includeEach
+          description: |
+            Include each read progress from every user that has opened the article
+          schema:
+            type: boolean
+          required: false
+      responses:
+        '200':
+          description: Article statistics are retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArticleReadProgressesResponse'
+        '400':
+          description: Invalid request
+        '404':
+          description: Requested article is not found
+      security:
+        - bearerAuth: [ ]
+  /articles-statistics/{articleId}/reactions:
+    get:
+      tags:
+        - article-statistics
+      summary: Get article reactions
+      description: Get article reactions
+      operationId: getArticleReactions
+      parameters:
+        - in: path
+          name: articleId
+          schema:
+            type: integer
+            format: int64
+          required: true
+      responses:
+        '200':
+          description: Article statistics are retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArticleReactionsResponse'
+        '400':
+          description: Invalid request
+        '404':
+          description: Requested article is not found
+      security:
+        - bearerAuth: [ ]
+    post:
+      tags:
+        - article-statistics
+      summary: Set article reaction
+      description: Sets or updates article reaction by current user
+      operationId: setArticleReaction
+      parameters:
+        - in: path
+          name: articleId
+          schema:
+            type: integer
+            format: int64
+          required: true
+        - in: query
+          name: reactionType
+          schema:
+            type: integer
+            format: int32
+            description: Unicode code of emoji set
+          required: true
+      responses:
+        '200':
+          description: Article reaction is est successfully
+        '400':
+          description: Invalid request
+        '404':
+          description: Requested article is not found
+      security:
+        - bearerAuth: [ ]
+  /users:
+    get:
+      tags:
+        - users
+      summary: Get info about current user
+      description: Get info about current user
+      operationId: getCurrentUserInfo
+      responses:
+        '200':
+          description: User info is retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+  /users/{userId}:
+    get:
+      tags:
+        - users
+      summary: Get user info by id
+      description: Get user info by id
+      operationId: getUserInfoById
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: integer
+            format: int64
+          required: true
+      responses:
+        '200':
+          description: User info is retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Invalid user id
+        '404':
+          description: Requested user is not found
+components:
+  securitySchemes:
+    bearerAuth: # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT    # optional, arbitrary value for documentation purposes
+  schemas:
+    NewArticleRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          required: true
+        previewImage:
+          type: string
+          required: false
+          description: Image url
+        content:
+          type: string
+    UpdateArticleRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+        previewImage:
+          type: string
+          description: Image url
+    UpdateArticleAccessRequest:
+      type: object
+      properties:
+        access:
+          type: string
+          enum:
+            - PUBLIC
+            - PRIVATE
+            - CUSTOM
+        users:
+          type: array
+          items:
+            type: integer
+            format: int64
+          description: |
+            If access is CUSTOM, then users that are granted access 
+            should be provided
+    ArticleResponse:
+      type: object
+      properties:
+        articleId:
+          type: integer
+          format: int64
+        title:
+          type: string
+        previewImage:
+          type: string
+          description: Image url
+        content:
+          type: string
+        creatorId:
+          type: integer
+          format: int64
+        created:
+          type: integer
+          format: int64
+          description: Article creation date in milliseconds from EPOCH
+        updated:
+          type: integer
+          format: int64
+          description: Article update date in milliseconds from EPOCH
+    ArticlesResponse:
+      type: object
+      properties:
+        articles:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShortArticleResponse'
+        page:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+    ShortArticleResponse:
+      type: object
+      properties:
+        articleId:
+          type: integer
+          format: int64
+        title:
+          type: string
+        previewImage:
+          type: string
+          description: Image url
+        creatorId:
+          type: integer
+          format: int64
+        created:
+          type: integer
+          format: int64
+          description: Article creation date in milliseconds from EPOCH
+        updated:
+          type: integer
+          format: int64
+          description: Article update date in milliseconds from EPOCH
+    ArticleReadProgressesResponse:
+      type: object
+      properties:
+        readProgress:
+          type: integer
+          format: int32
+        readCount:
+          type: integer
+          format: int32
+        readDuration:
+          type: integer
+          format: int32
+        readProgresses:
+          type: array
+          items:
+            $ref: '#/components/schemas/ArticleReadProgressResponse'
+    ArticleReadProgressResponse:
+      type: object
+      properties:
+        readProgress:
+          type: integer
+          format: int32
+    ArticleReactionsResponse:
+      type: object
+      properties:
+        reactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ArticleReactionResponse'
+    ArticleReactionResponse:
+      type: object
+      properties:
+        reaction:
+          type: integer
+          format: int32
+          description: Emoji that user has reacted with
+        count:
+          type: integer
+          format: int32
+    UserResponse:
+      type: object
+      properties:
+        userId:
+          type: integer
+          format: int64
+        username:
+          type: string
+        email:
+          type: string
+        avatar:
+          type: string
+          description: Image url
