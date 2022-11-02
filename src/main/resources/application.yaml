@@ -7,4 +7,4 @@ spring:
             client-id: 716186218438-u2cmcht3ti2cqc1qdh4o1n3nin4cujir.apps.googleusercontent.com
             client-secret: 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
   datasource:
-    url: jdbc:h2:mem:testdb
+    url: jdbc:h2:file:D:/data
