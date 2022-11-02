@@ -359,11 +359,10 @@ components:
             - PUBLIC
             - PRIVATE
             - CUSTOM
-        users:
+        userIds:
           type: array
           items:
-            type: integer
-            format: int64
+            type: string
           description: |
             If access is CUSTOM, then users that are granted access 
             should be provided
