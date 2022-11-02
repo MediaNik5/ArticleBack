@@ -316,7 +316,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserResponse'
+                $ref: '#/components/schemas/ShortUserResponse'
         '400':
           description: Invalid user id
         '404':
@@ -359,11 +359,10 @@ components:
             - PUBLIC
             - PRIVATE
             - CUSTOM
-        users:
+        userIds:
           type: array
           items:
-            type: integer
-            format: int64
+            type: string
           description: |
             If access is CUSTOM, then users that are granted access 
             should be provided
@@ -468,12 +467,21 @@ components:
     UserResponse:
       type: object
       properties:
-        userId:
-          type: integer
-          format: int64
+        id:
+          type: string
         username:
           type: string
         email:
+          type: string
+        avatar:
+          type: string
+          description: Image url
+    ShortUserResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
           type: string
         avatar:
           type: string
