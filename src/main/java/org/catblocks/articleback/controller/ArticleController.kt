@@ -40,7 +40,7 @@ class ArticleController(
 
     @GetMapping("/{id}")
     fun getArticle(
-        @AuthenticationPrincipal user: UserPrincipal,
+        @AuthenticationPrincipal user: UserPrincipal?,
         @PathVariable id: Long,
     ): ArticleResponse {
         return articleService.getArticle(user, id).toDto()
