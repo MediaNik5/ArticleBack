@@ -1,14 +1,12 @@
 package org.catblocks.articleback.model
 
-import javax.persistence.Entity
-import javax.persistence.Id
-import javax.persistence.ManyToOne
-import javax.persistence.Table
+import javax.persistence.*
 
 @Entity
 @Table(name = "article_reactions")
 class ArticleReaction(
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long,
     @ManyToOne
     var article: Article,

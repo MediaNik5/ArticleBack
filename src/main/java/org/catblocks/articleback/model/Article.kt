@@ -8,10 +8,13 @@ import javax.persistence.*
 @Entity
 data class Article(
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long,
     var title: String,
     var previewImage: String,
-    @OneToOne(cascade = [CascadeType.ALL], orphanRemoval = true, optional = false, mappedBy = "article")
+    @ManyToOne
+    var author: User,
+    @OneToOne(cascade = [CascadeType.ALL], orphanRemoval = true, optional = false)
     var access: ArticleAccess,
     @Column(columnDefinition = "TEXT")
     var content: String,

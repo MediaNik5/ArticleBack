@@ -7,9 +7,8 @@ import javax.persistence.*
 @Entity
 data class ArticleAccess(
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long,
-    @OneToOne(mappedBy = "access")
-    var article: Article,
     var accessType: AccessType,
     @ManyToMany
     var users: List<User>,
@@ -26,6 +25,6 @@ data class ArticleAccess(
 
     @Override
     override fun toString(): String {
-        return this::class.simpleName + "(id = $id , article = $article , accessType = $accessType )"
+        return this::class.simpleName + "(id = $id, accessType = $accessType )"
     }
 }
