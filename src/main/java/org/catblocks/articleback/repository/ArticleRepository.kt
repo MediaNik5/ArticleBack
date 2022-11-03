@@ -1,6 +1,9 @@
+@file:Suppress("FunctionName")
+
 package org.catblocks.articleback.repository
 
 import org.catblocks.articleback.controller.SortBy
+import org.catblocks.articleback.model.AccessType
 import org.catblocks.articleback.model.Article
 import org.catblocks.articleback.model.User
 import org.springframework.data.domain.PageRequest
@@ -11,6 +14,9 @@ import org.springframework.data.jpa.repository.Query
 import java.util.*
 
 interface ArticleRepository : JpaRepository<Article, Long> {
+
+    fun findByAccess_AccessType(accessType: AccessType): List<Article>
+
     fun findByIdAndAuthor(id: Long, author: User): Article?
     fun findAll(
         author: User,

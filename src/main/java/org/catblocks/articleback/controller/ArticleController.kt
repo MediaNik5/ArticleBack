@@ -15,8 +15,8 @@ class ArticleController(
     fun createArticle(
         @AuthenticationPrincipal user: UserPrincipal,
         @RequestBody article: NewArticleRequest,
-    ) {
-        articleService.createArticle(user, article)
+    ) : ArticleResponse {
+        return articleService.createArticle(user, article).toDto()
     }
 
     @GetMapping
