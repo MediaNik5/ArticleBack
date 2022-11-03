@@ -55,7 +55,8 @@ public class WebConfiguration  extends WebSecurityConfigurerAdapter {
                     "/",
                     "/error",
                     "/oauth/**",
-                    "/oauth2/**"
+                    "/oauth2/**",
+                    "/users/{id}"
                 ).permitAll()
             .anyRequest()
                 .authenticated()
