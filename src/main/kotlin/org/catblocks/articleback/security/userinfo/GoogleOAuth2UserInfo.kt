@@ -1,36 +1,17 @@
-package org.catblocks.articleback.security.userinfo;
+package org.catblocks.articleback.security.userinfo
 
-import java.math.BigDecimal;
-import java.util.Map;
+class GoogleOAuth2UserInfo(private val attributes: Map<String, Any?>) : OAuth2UserInfo() {
 
-public class GoogleOAuth2UserInfo extends OAuth2UserInfo{
+    override val id: String
+        get() = attributes["sub"] as String
+    override val name: String
+        get() = attributes["name"] as String
+    override val email: String
+        get() = attributes["email"] as String
+    override val imageUrl: String
+        get() = attributes["picture"] as String
 
-    public GoogleOAuth2UserInfo(Map<String, Object> attributes){
-        super(attributes);
-    }
-
-    @Override
-    public String getName(){
-        return (String) attributes.get("name");
-    }
-
-    @Override
-    public String getImageUrl(){
-        return (String) attributes.get("picture");
-    }
-
-    @Override
-    public String toString(){
-        return "Id: " + getId() + ", email: " + getEmail();
-    }
-
-    @Override
-    public String getId(){
-        return (String) attributes.get("sub");
-    }
-
-    @Override
-    public String getEmail(){
-        return (String) attributes.get("email");
+    override fun toString(): String {
+        return "Id: $id, email: $email"
     }
 }

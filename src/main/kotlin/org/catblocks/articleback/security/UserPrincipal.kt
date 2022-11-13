@@ -1,122 +1,107 @@
-package org.catblocks.articleback.security;
+package org.catblocks.articleback.security
 
-import org.catblocks.articleback.model.User;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.catblocks.articleback.model.User
+import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.oauth2.core.user.OAuth2User
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+class UserPrincipal : OAuth2User, UserDetails {
+    val id: String
+    private val username: String
+    private val email: String
+    private val authorities: Collection<GrantedAuthority>
+    private val attributes: Map<String, Any>
 
-public class UserPrincipal implements OAuth2User, UserDetails{
-    private static final SimpleGrantedAuthority roleUser = new SimpleGrantedAuthority("ROLE_USER");
-    private final String id;
-    private final String username;
-    private final String email;
-    private final Collection<? extends GrantedAuthority> authorities;
-    private final Map<String, Object> attributes;
-
-    public UserPrincipal(
-        String id,
-        String username,
-        String email,
-        Collection<? extends GrantedAuthority> authorities,
-        Map<String, Object> attributes
-    ){
-        this.id = id;
-        this.username = username;
-        this.email = email;
-        this.authorities = authorities;
-        this.attributes = attributes;
-    }
-    public UserPrincipal(
-        String id,
-        String username,
-        String email,
-        Collection<? extends GrantedAuthority> authorities
-    ){
-        this.id = id;
-        this.username = username;
-        this.email = email;
-        this.authorities = authorities;
-        this.attributes = Map.of();
-    }
-    public static UserPrincipal create(User user){
-        return new UserPrincipal(
-            user.getId(),
-            user.getUsername(),
-            user.getEmail(),
-            requireRoleUser(null)
-        );
+    constructor(
+        id: String,
+        username: String,
+        email: String,
+        authorities: Collection<GrantedAuthority>,
+        attributes: Map<String, Any>,
+    ) {
+        this.id = id
+        this.username = username
+        this.email = email
+        this.authorities = authorities
+        this.attributes = attributes
     }
 
-    public static UserPrincipal create(User user, Map<String, Object> attributes){
-        return new UserPrincipal(
-            user.getId(),
-            user.getUsername(),
-            user.getEmail(),
-            requireRoleUser(null),
-            attributes
-        );
+    constructor(
+        id: String,
+        username: String,
+        email: String,
+        authorities: Collection<GrantedAuthority>,
+    ) {
+        this.id = id
+        this.username = username
+        this.email = email
+        this.authorities = authorities
+        attributes = java.util.Map.of()
     }
 
-    private static List<GrantedAuthority> requireRoleUser(List<GrantedAuthority> authorities){
-        if(authorities == null)
-            authorities = new ArrayList<>(1);
-        if(!authorities.contains(roleUser))
-            authorities.add(roleUser);
-        return authorities;
+    override fun getPassword(): String? {
+        return null
     }
 
-    @Override
-    public String getPassword(){
-        return null;
+    override fun getUsername(): String {
+        return id
     }
 
-    @Override
-    public String getUsername(){
-        return id;
+    override fun isAccountNonExpired(): Boolean {
+        return true
     }
 
-    public String getId(){
-        return id;
+    override fun isAccountNonLocked(): Boolean {
+        return true
     }
 
-    @Override
-    public boolean isAccountNonExpired(){
-        return true;
+    override fun isCredentialsNonExpired(): Boolean {
+        return true
     }
 
-    @Override
-    public boolean isAccountNonLocked(){
-        return true;
+    override fun isEnabled(): Boolean {
+        return true
     }
 
-    @Override
-    public boolean isCredentialsNonExpired(){
-        return true;
+    override fun getAttributes(): Map<String, Any> {
+        return attributes
     }
 
-    @Override
-    public boolean isEnabled(){
-        return true;
+    override fun getAuthorities(): Collection<GrantedAuthority> {
+        return authorities
     }
 
-    @Override
-    public Map<String, Object> getAttributes(){
-        return attributes;
+    override fun getName(): String {
+        return id
     }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities(){
-        return authorities;
-    }
+    companion object {
+        private val roleUser = SimpleGrantedAuthority("ROLE_USER")
+        fun create(user: User): UserPrincipal {
+            return UserPrincipal(
+                user.id,
+                user.username,
+                user.email,
+                requireRoleUser(null)
+            )
+        }
 
-    @Override
-    public String getName(){
-        return id;
+        fun create(user: User, attributes: Map<String, Any>): UserPrincipal {
+            return UserPrincipal(
+                user.id,
+                user.username,
+                user.email,
+                requireRoleUser(null),
+                attributes
+            )
+        }
+
+        private fun requireRoleUser(authorities: MutableList<GrantedAuthority>?): List<GrantedAuthority> {
+            var authorities = authorities
+            if (authorities == null) authorities = ArrayList(1)
+            if (!authorities.contains(roleUser)) authorities.add(roleUser)
+            return authorities
+        }
     }
 }
