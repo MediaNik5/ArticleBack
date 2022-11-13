@@ -6,6 +6,7 @@ import org.catblocks.articleback.security.token.OAuth2AuthenticationFailureHandl
 import org.catblocks.articleback.security.token.OAuth2AuthenticationSuccessHandler;
 import org.catblocks.articleback.security.token.TokenAuthenticationFilter;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -48,15 +49,17 @@ public class WebConfiguration  extends WebSecurityConfigurerAdapter {
             .csrf()
                 .disable()
             .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .and()
             .authorizeRequests()
-                .antMatchers(
-                    "/",
-                    "/error",
-                    "/oauth/**",
-                    "/oauth2/**"
-                ).permitAll()
+            .antMatchers(
+                "/",
+                "/error",
+                "/oauth/**",
+                "/oauth2/**"
+            ).permitAll()
+            .antMatchers(HttpMethod.GET, "/articles/{id}")
+            .permitAll()
             .anyRequest()
                 .authenticated()
                 .and()
