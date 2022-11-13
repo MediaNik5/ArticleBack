@@ -1,5 +1,6 @@
 package org.catblocks.articleback.controller
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import org.catblocks.articleback.security.UserPrincipal
 import org.catblocks.articleback.service.ArticleService
 import org.springframework.data.domain.Sort
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*
 class ArticleController(
     private val articleService: ArticleService,
 ) {
+    @SecurityRequirement(name = "Bearer Authentication")
     @PostMapping
     fun createArticle(
         @AuthenticationPrincipal user: UserPrincipal,
@@ -19,6 +21,8 @@ class ArticleController(
         return articleService.createArticle(user, article).toDto()
     }
 
+    @Suppress("NAME_SHADOWING")
+    @SecurityRequirement(name = "Bearer Authentication")
     @GetMapping
     fun getArticles(
         @AuthenticationPrincipal user: UserPrincipal,
@@ -27,15 +31,17 @@ class ArticleController(
         @RequestParam(required = false) page: Int?,
         @RequestParam(required = false) size: Int?,
     ): ArticlesResponse {
+        val page = page ?: 0
+        val size = size ?: 10
         val articles = articleService.getArticles(
             user,
             sortBy ?: SortBy.CREATED,
             sortDirection ?: Sort.Direction.DESC,
-            page ?: 0,
-            size ?: 10,
+            page,
+            size,
         )
 
-        return articles.toDto(page ?: 0, size ?: 10)
+        return articles.toDto(page, size)
     }
 
     @GetMapping("/{id}")
@@ -47,6 +53,7 @@ class ArticleController(
     }
 
     @PutMapping("/{id}")
+    @SecurityRequirement(name = "Bearer Authentication")
     fun updateArticle(
         @AuthenticationPrincipal user: UserPrincipal,
         @PathVariable id: Long,
@@ -56,6 +63,7 @@ class ArticleController(
     }
 
     @DeleteMapping("/{id}")
+    @SecurityRequirement(name = "Bearer Authentication")
     fun deleteArticle(
         @AuthenticationPrincipal user: UserPrincipal,
         @PathVariable id: Long,
@@ -64,6 +72,7 @@ class ArticleController(
     }
 
     @PutMapping("/{id}/access")
+    @SecurityRequirement(name = "Bearer Authentication")
     fun changeAccess(
         @AuthenticationPrincipal user: UserPrincipal,
         @PathVariable id: Long,

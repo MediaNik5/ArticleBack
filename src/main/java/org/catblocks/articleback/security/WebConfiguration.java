@@ -1,5 +1,7 @@
 package org.catblocks.articleback.security;
 
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import org.catblocks.articleback.security.token.AccessTokenResponseClient;
 import org.catblocks.articleback.security.token.HttpCookieOAuth2AuthorizationRequestRepository;
 import org.catblocks.articleback.security.token.OAuth2AuthenticationFailureHandler;
@@ -16,6 +18,12 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
+@SecurityScheme(
+        name = "Bearer Authentication",
+        type = SecuritySchemeType.HTTP,
+        bearerFormat = "JWT",
+        scheme = "bearer"
+)
 @EnableWebSecurity
 public class WebConfiguration  extends WebSecurityConfigurerAdapter {
     private final HttpCookieOAuth2AuthorizationRequestRepository cookieRepository;
@@ -57,7 +65,10 @@ public class WebConfiguration  extends WebSecurityConfigurerAdapter {
                     "/error",
                     "/oauth/**",
                     "/oauth2/**",
-                    "/users/{id}"
+                    "/users/{id}",
+                    "/swagger-ui/index.html",
+                    "/swagger-ui/**",
+                    "/v3/api-docs/**"
                 ).permitAll()
                 .antMatchers(HttpMethod.GET, "/articles/{id}")
                 .permitAll()

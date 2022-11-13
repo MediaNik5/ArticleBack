@@ -1,5 +1,6 @@
 package org.catblocks.articleback.controller
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import org.catblocks.articleback.security.UserPrincipal
 import org.catblocks.articleback.service.UserService
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -15,6 +16,7 @@ class UserController(
 ) {
 
     @GetMapping
+    @SecurityRequirement(name = "Bearer Authentication")
     fun getUser(@AuthenticationPrincipal user: UserPrincipal): UserResponse {
         return userService.getUser(user.id).toDto()
     }
