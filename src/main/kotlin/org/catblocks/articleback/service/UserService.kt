@@ -14,6 +14,6 @@ class UserService(
     fun getUser(id: String): User {
         return userRepository.findById(id).orElseThrow {
             throw ResponseStatusException(HttpStatus.NOT_FOUND, "User with id ${id} not found")
-        }
+        }!!
     }
 }

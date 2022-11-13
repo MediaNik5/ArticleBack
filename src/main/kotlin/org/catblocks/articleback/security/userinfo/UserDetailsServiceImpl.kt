@@ -16,7 +16,7 @@ class PersonDetailsServiceImpl(
     override fun loadUserByUsername(username: String): UserDetails {
         return userRepository
             .findById(username)
-            .map { person -> UserPrincipal.create(person) }
+            .map { person -> UserPrincipal.create(person!!) }
             .orElseThrow { UsernameNotFoundException(username) }
     }
 }

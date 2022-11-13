@@ -17,6 +17,6 @@ class UserInfoExtractorService(
         return userInfoExtractors
             .first { userInfoExtractor: Extractor<Map<String, Any>, Map<String, Any>> ->
                 userInfoExtractor.canProceed(registrationId)
-            }.extract(response.body, userRequest)
+            }.extract(response.body!!, userRequest)
     }
 }
