@@ -49,18 +49,19 @@ public class WebConfiguration  extends WebSecurityConfigurerAdapter {
             .csrf()
                 .disable()
             .sessionManagement()
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
             .authorizeRequests()
-            .antMatchers(
-                "/",
-                "/error",
-                "/oauth/**",
-                "/oauth2/**"
-            ).permitAll()
-            .antMatchers(HttpMethod.GET, "/articles/{id}")
-            .permitAll()
-            .anyRequest()
+                .antMatchers(
+                    "/",
+                    "/error",
+                    "/oauth/**",
+                    "/oauth2/**",
+                    "/users/{id}"
+                ).permitAll()
+                .antMatchers(HttpMethod.GET, "/articles/{id}")
+                .permitAll()
+                .anyRequest()
                 .authenticated()
                 .and()
             .exceptionHandling()
