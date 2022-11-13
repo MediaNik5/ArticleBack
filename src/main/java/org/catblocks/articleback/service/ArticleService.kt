@@ -21,8 +21,8 @@ class ArticleService(
     private val articleRepository: ArticleRepository,
     private val userRepository: UserRepository,
 ) {
-    fun createArticle(user: UserPrincipal, article: NewArticleRequest) {
-        articleRepository.save(
+    fun createArticle(user: UserPrincipal, article: NewArticleRequest): Article {
+        return articleRepository.save(
             Article(
                 id = 0L,
                 title = article.title,
@@ -70,7 +70,6 @@ class ArticleService(
             } else {
                 throw ResponseStatusException(HttpStatus.NOT_FOUND, "Article with id $id not found")
             }
-
             AccessType.PRIVATE -> throw ResponseStatusException(HttpStatus.NOT_FOUND, "Article with id $id not found")
         }
     }
