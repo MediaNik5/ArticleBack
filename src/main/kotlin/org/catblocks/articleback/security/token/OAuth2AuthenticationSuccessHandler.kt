@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse
 @Component
 class OAuth2AuthenticationSuccessHandler(
     private val tokenProvider: TokenProvider,
-    @Value("@{auth.redirectUris}") private val authorizedRedirectUris: List<String>,
+    @Value("\${auth.redirectUris}") private val authorizedRedirectUris: List<String>,
 ) : SimpleUrlAuthenticationSuccessHandler() {
     @Throws(IOException::class, ServletException::class)
     override fun onAuthenticationSuccess(
