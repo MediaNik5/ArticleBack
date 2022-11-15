@@ -7,13 +7,13 @@ import java.util.*
 import java.util.stream.Collectors
 
 @Service
-class DefaultUserInfoExtractor : Extractor<Map<String, Any?>?, Map<String, Any?>?> {
+class DefaultUserInfoExtractor : Extractor<Map<String, Any?>, Map<String, Any?>> {
     override fun canProceed(registrationId: String): Boolean {
         return AUTH_PROVIDERS.contains(registrationId.uppercase())
     }
 
-    override fun extract(o: Map<String, Any?>?, userRequest: OAuth2UserRequest?): Map<String, Any?>? {
-        TODO("Not yet implemented")
+    override fun extract(o: Map<String, Any?>, userRequest: OAuth2UserRequest?): Map<String, Any?> {
+        return o
     }
 
     companion object {

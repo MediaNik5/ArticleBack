@@ -25,7 +25,6 @@ import org.springframework.web.client.RestClientException
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.UnknownContentTypeException
 import java.util.*
-import kotlin.collections.LinkedHashSet
 
 @Service
 class CustomOAuth2UserService(
@@ -67,7 +66,7 @@ class CustomOAuth2UserService(
             oAuth2User.attributes
         )
 
-        if (oAuth2UserInfo.email.isNullOrBlank()) {
+        if (oAuth2UserInfo.email.isBlank()) {
             throw AuthenticationCredentialsNotFoundException("Email not found from OAuth2 provider")
         }
         val userOptional = userRepository.findById(oAuth2UserInfo.id).orElse(null)
@@ -109,10 +108,10 @@ class CustomOAuth2UserService(
         return userNameAttributeName
     }
 
-    fun getResponse(userRequest: OAuth2UserRequest, request: RequestEntity<*>): Map<String, Any> {
+    fun getResponse(userRequest: OAuth2UserRequest, request: RequestEntity<*>): Map<String, Any?> {
         return try {
-            val response: ResponseEntity<Map<String, Any>> =
-                RestTemplate().exchange(request, Any::class.java) as ResponseEntity<Map<String, Any>>
+            val response: ResponseEntity<Map<String, Any?>> =
+                RestTemplate().exchange(request, Any::class.java) as ResponseEntity<Map<String, Any?>>
 
             userInfoExtractorService.extract(response, userRequest)
         } catch (ex: OAuth2AuthorizationException) {
