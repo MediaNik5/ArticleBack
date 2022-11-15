@@ -1,11 +1,9 @@
 package org.catblocks.articleback.security.token
 
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.http.HttpStatus
 import org.springframework.security.core.Authentication
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler
 import org.springframework.stereotype.Component
-import org.springframework.web.server.ResponseStatusException
 import org.springframework.web.util.UriComponentsBuilder
 import org.springframework.web.util.WebUtils.getCookie
 import java.io.IOException
@@ -35,10 +33,10 @@ class OAuth2AuthenticationSuccessHandler(
     ): String {
         val redirectUrl = getCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME)?.value
         if (redirectUrl != null && !isAuthorizedRedirectUri(redirectUrl)) {
-            throw ResponseStatusException(
-                HttpStatus.BAD_REQUEST,
-                "Sorry! We've got an Unauthorized Redirect URI $redirectUrl and can't proceed with the authentication"
-            )
+//            throw ResponseStatusException(
+//                HttpStatus.BAD_REQUEST,
+//                "Sorry! We've got an Unauthorized Redirect URI $redirectUrl and can't proceed with the authentication"
+//            )
         }
         val targetUrl = redirectUrl ?: defaultTargetUrl
         val token = tokenProvider.createToken(authentication)
@@ -49,6 +47,7 @@ class OAuth2AuthenticationSuccessHandler(
 
     private fun isAuthorizedRedirectUri(uri: String): Boolean {
         val clientRedirectUri = URI.create(uri)
+        println(authorizedRedirectUris)
         return authorizedRedirectUris
             .any { authorizedRedirectUri: String ->
                 // Only validate host and port. Let the clients use different paths if they want to
