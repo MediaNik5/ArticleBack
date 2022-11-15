@@ -37,7 +37,7 @@ class OAuth2AuthenticationSuccessHandler(
         if (redirectUrl != null && !isAuthorizedRedirectUri(redirectUrl)) {
             throw ResponseStatusException(
                 HttpStatus.BAD_REQUEST,
-                "Sorry! We've got an Unauthorized Redirect URI and can't proceed with the authentication"
+                "Sorry! We've got an Unauthorized Redirect URI $redirectUrl and can't proceed with the authentication"
             )
         }
         val targetUrl = redirectUrl ?: defaultTargetUrl
