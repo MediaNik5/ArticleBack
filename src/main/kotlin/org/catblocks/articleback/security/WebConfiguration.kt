@@ -28,7 +28,7 @@ class WebConfiguration(
     override fun configure(http: HttpSecurity) {
         http
             .cors()
-            .and()
+            .disable()
             .csrf()
             .disable()
             .sessionManagement()
@@ -40,7 +40,7 @@ class WebConfiguration(
                 "/error",
                 "/oauth/**",
                 "/oauth2/**",
-                "/users/{id}",
+                "/users/*",
                 "/swagger-ui/index.html",
                 "/swagger-ui/**",
                 "/v3/api-docs/**"
