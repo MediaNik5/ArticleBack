@@ -18,7 +18,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 import org.springframework.web.filter.CorsFilter
-import java.util.List
 
 @Configuration
 @SecurityScheme(name = "Bearer Authentication", type = SecuritySchemeType.HTTP, bearerFormat = "JWT", scheme = "bearer")
@@ -83,21 +82,22 @@ class WebConfiguration(
 
     @Bean
     fun simpleCorsFilter(): FilterRegistrationBean<CorsFilter>? {
-        val config: CorsConfiguration = CorsConfiguration()
+        val config = CorsConfiguration()
         config.setAllowCredentials(true)
         config.setAllowedOrigins(
-            List.of(
+            listOf(
                 "https://comgrid.ru",
                 "https://comgrid.ru:444",
                 "http://localhost:3000",
                 "http://localhost:3001",
                 "http://localhost:8080",
-                "http://localhost:8000"
+                "http://localhost:8000",
+                "https://restless-escape-632568.postman.co"
             )
         )
-        config.setAllowedMethods(List.of("GET", "HEAD", "POST", "PUT", "DELETE", "PATCH"))
-        config.setAllowedHeaders(List.of("Content-Types", "Content-Type", "authorization", "x-auth-token"))
-        val source: UrlBasedCorsConfigurationSource = UrlBasedCorsConfigurationSource()
+        config.setAllowedMethods(listOf("GET", "HEAD", "POST", "PUT", "DELETE", "PATCH"))
+        config.setAllowedHeaders(listOf("Content-Types", "Content-Type", "authorization", "x-auth-token"))
+        val source = UrlBasedCorsConfigurationSource()
         source.registerCorsConfiguration("/**", config)
         val bean: FilterRegistrationBean<CorsFilter> = FilterRegistrationBean(CorsFilter(source))
         bean.setOrder(Ordered.HIGHEST_PRECEDENCE)
