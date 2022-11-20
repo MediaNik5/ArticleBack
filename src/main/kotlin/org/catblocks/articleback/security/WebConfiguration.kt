@@ -3,7 +3,10 @@ package org.catblocks.articleback.security
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType
 import io.swagger.v3.oas.annotations.security.SecurityScheme
 import org.catblocks.articleback.security.token.*
+import org.springframework.boot.web.servlet.FilterRegistrationBean
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.Ordered
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -12,6 +15,10 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.authentication.HttpStatusEntryPoint
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource
+import org.springframework.web.filter.CorsFilter
+import java.util.List
 
 @Configuration
 @SecurityScheme(name = "Bearer Authentication", type = SecuritySchemeType.HTTP, bearerFormat = "JWT", scheme = "bearer")
@@ -29,7 +36,7 @@ class WebConfiguration(
     override fun configure(http: HttpSecurity) {
         http
             .cors()
-            .disable()
+            .and()
             .csrf()
             .disable()
             .sessionManagement()
@@ -73,4 +80,28 @@ class WebConfiguration(
             .and()
             .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
     }
+
+    @Bean
+    fun simpleCorsFilter(): FilterRegistrationBean<CorsFilter>? {
+        val config: CorsConfiguration = CorsConfiguration()
+        config.setAllowCredentials(true)
+        config.setAllowedOrigins(
+            List.of(
+                "https://comgrid.ru",
+                "https://comgrid.ru:444",
+                "http://localhost:3000",
+                "http://localhost:3001",
+                "http://localhost:8080",
+                "http://localhost:8000"
+            )
+        )
+        config.setAllowedMethods(List.of("GET", "HEAD", "POST", "PUT", "DELETE", "PATCH"))
+        config.setAllowedHeaders(List.of("Content-Types", "Content-Type", "authorization", "x-auth-token"))
+        val source: UrlBasedCorsConfigurationSource = UrlBasedCorsConfigurationSource()
+        source.registerCorsConfiguration("/**", config)
+        val bean: FilterRegistrationBean<CorsFilter> = FilterRegistrationBean(CorsFilter(source))
+        bean.setOrder(Ordered.HIGHEST_PRECEDENCE)
+        return bean
+    }
+
 }
