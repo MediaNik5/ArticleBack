@@ -12,6 +12,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.authentication.HttpStatusEntryPoint
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.web.servlet.config.annotation.CorsRegistry
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 @Configuration
 @SecurityScheme(name = "Bearer Authentication", type = SecuritySchemeType.HTTP, bearerFormat = "JWT", scheme = "bearer")
@@ -23,7 +25,12 @@ class WebConfiguration(
     private val successHandler: OAuth2AuthenticationSuccessHandler,
     private val failureHandler: OAuth2AuthenticationFailureHandler,
     private val tokenAuthenticationFilter: TokenAuthenticationFilter,
-) : WebSecurityConfigurerAdapter() {
+) : WebSecurityConfigurerAdapter(), WebMvcConfigurer {
+
+    override fun addCorsMappings(registry: CorsRegistry) {
+        registry.addMapping("/**").allowedMethods("*")
+    }
+
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
         http
