@@ -20,7 +20,8 @@ paths:
       tags:
         - articles
       summary: Create new article
-      description: Create new article
+      description:
+        Create new article. Only available for authorized users.
       operationId: createArticle
       requestBody:
         description: Create new article
@@ -32,6 +33,10 @@ paths:
       responses:
         '200':
           description: Article is created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArticleResponse'
         '400':
           description: Invalid request body
         '405':
@@ -42,7 +47,9 @@ paths:
       tags:
         - articles
       summary: Get all articles
-      description: Get all articles
+      description:
+        Get all articles, that current authorized user has, including private and custom.
+        You might specify sortBy, page, size, sortDirection clauses to specify requested articles.
       operationId: getAllArticles
       parameters:
         - in: query
@@ -83,8 +90,6 @@ paths:
                 $ref: '#/components/schemas/ArticlesResponse'
         '400':
           description: Invalid request body
-        '404':
-          description: Article not found
       security:
         - bearerAuth: [ ]
   /articles/{articleId}:
@@ -92,7 +97,11 @@ paths:
       tags:
         - articles
       summary: Get article by id
-      description: Get article by id
+      description:
+        Get article by id. If article is not owned by current user and 
+        current user does not have access to this article(either article is private
+        or custom and list of users does not contain current user), then 
+        404 NOT FOUND is returned
       operationId: getArticleById
       parameters:
         - in: path
@@ -111,14 +120,16 @@ paths:
         '400':
           description: Invalid article id
         '404':
-          description: Requested article is not found
+          description:
+            Requested article is not found. It might be the case when current
+            user does not have access to this article.
       security:
         - bearerAuth: [ ]
     put:
       tags:
         - articles
       summary: Update article
-      description: Update article
+      description: Update given article. Available only for article creator.
       operationId: updateArticle
       requestBody:
         description: Update article
@@ -133,16 +144,16 @@ paths:
         '400':
           description: Invalid request body
         '404':
-          description: Article not found
-        '405':
-          description: Validation exception
+          description:
+            Article not found. It might be also the case, when current user
+            does not have access to this article
       security:
         - bearerAuth: [ ]
     delete:
       tags:
         - articles
       summary: Delete article
-      description: Delete article
+      description: Delete article. Only available for the author of article
       operationId: deleteArticle
       parameters:
         - in: path
@@ -165,7 +176,7 @@ paths:
       tags:
         - articles
       summary: Update article access
-      description: Update article access
+      description: Update article access. Available only for article author.
       operationId: updateArticleAccess
       parameters:
         - in: path
@@ -187,9 +198,9 @@ paths:
         '400':
           description: Invalid request body
         '404':
-          description: Article not found
-        '405':
-          description: Validation exception
+          description:
+            Article not found. It might be the case when current user does not
+            have access to this article
       security:
         - bearerAuth: [ ]
   /articles-statistics/{articleId}/read-progress:
@@ -197,7 +208,7 @@ paths:
       tags:
         - article-statistics
       summary: Get article read progresses
-      description: Get article read progresses
+      description: Get article read progresses. Available only to article author.
       operationId: getArticleReadProgress
       parameters:
         - in: path
@@ -223,9 +234,31 @@ paths:
         '400':
           description: Invalid request
         '404':
-          description: Requested article is not found
+          description:
+            Requested article is not found. It might be the case when current user does not
+            have access to this article
       security:
         - bearerAuth: [ ]
+    post:
+      tags:
+        - article-statistics
+      summary: Set read progress
+      description: Set read progress
+      operationId: addReadProgress
+      requestBody:
+        description: Set read progress
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateArticleReadProgressRequest'
+        required: true
+      responses:
+        '200':
+          description: Successfully saved read progress
+        '400':
+          description: Invalid request
+        '404':
+          description: Requested article is not found
   /articles-statistics/{articleId}/reactions:
     get:
       tags:
@@ -250,14 +283,18 @@ paths:
         '400':
           description: Invalid request
         '404':
-          description: Requested article is not found
+          description:
+            Requested article is not found. It might be the case when current user does not
+            have access to this article
       security:
         - bearerAuth: [ ]
     post:
       tags:
         - article-statistics
       summary: Set article reaction
-      description: Sets or updates article reaction by current user
+      description:
+        Sets article reaction by current user. If the reaction was already set, it 
+        will be deleted by calling this method
       operationId: setArticleReaction
       parameters:
         - in: path
@@ -275,11 +312,13 @@ paths:
           required: true
       responses:
         '200':
-          description: Article reaction is est successfully
+          description: Article reaction is set successfully
         '400':
           description: Invalid request
         '404':
-          description: Requested article is not found
+          description:
+            Requested article is not found. It might be the case when current user does not
+            have access to this article
       security:
         - bearerAuth: [ ]
   /users:
@@ -369,7 +408,7 @@ components:
     ArticleResponse:
       type: object
       properties:
-        articleId:
+        id:
           type: integer
           format: int64
         title:
@@ -486,3 +525,17 @@ components:
         avatar:
           type: string
           description: Image url
+    UpdateArticleReadProgressRequest:
+      type: object
+      properties:
+        articleId:
+          type: integer
+          format: int64
+        readProgress:
+          type: integer
+          format: int32
+          description: Read progress in percents
+        duration:
+          type: integer
+          format: int32
+          description: Read duration in microseconds
