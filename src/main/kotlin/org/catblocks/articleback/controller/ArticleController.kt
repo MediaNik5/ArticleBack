@@ -18,7 +18,7 @@ class ArticleController(
         @AuthenticationPrincipal user: UserPrincipal,
         @RequestBody article: NewArticleRequest,
     ) : ArticleResponse {
-        return articleService.createArticle(user, article).toDto()
+        return articleService.createArticle(user.id, article).toDto()
     }
 
     @Suppress("NAME_SHADOWING")
@@ -34,7 +34,7 @@ class ArticleController(
         val page = page ?: 0
         val size = size ?: 10
         val articles = articleService.getArticles(
-            user,
+            user.id,
             sortBy ?: SortBy.CREATED,
             sortDirection ?: Sort.Direction.DESC,
             page,
