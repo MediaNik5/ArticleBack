@@ -137,7 +137,7 @@ class ArticleServiceTest @Autowired constructor(
             expectedArticle
         )
 
-        val actualArticle = articleService.getArticle(UserPrincipal.create(imaginaryUsers[0]), id)
+        val actualArticle = articleService.getArticle(imaginaryUsers[0].id, id)
 
         assertEquals(actualArticle.title, expectedArticle.title)
         assertEquals(actualArticle.content, expectedArticle.content)
@@ -156,7 +156,7 @@ class ArticleServiceTest @Autowired constructor(
     fun `given own article, when asked for it, return article`() {
         val expectedArticle = articleRepository.findAll().first()
         assertDoesNotThrow {
-            articleService.getArticle(UserPrincipal.create(imaginaryUsers[0]), expectedArticle.id)
+            articleService.getArticle(imaginaryUsers[0].id, expectedArticle.id)
         }
     }
 
@@ -201,7 +201,7 @@ class ArticleServiceTest @Autowired constructor(
             .findByAccess_AccessType(AccessType.CUSTOM)
             .first{ it.access.users.isNotEmpty() }
         assertDoesNotThrow {
-            articleService.getArticle(UserPrincipal.create(imaginaryUsers[1]), expectedArticle.id)
+            articleService.getArticle(imaginaryUsers[1].id, expectedArticle.id)
         }
     }
 
@@ -219,7 +219,7 @@ class ArticleServiceTest @Autowired constructor(
             UpdateArticleRequest(expectedArticle.title, expectedArticle.content, expectedArticle.previewImage)
         )
 
-        val actualArticle = articleService.getArticle(UserPrincipal.create(imaginaryUsers[0]), expectedArticle.id)
+        val actualArticle = articleService.getArticle(imaginaryUsers[0].id, expectedArticle.id)
         assertEquals(expectedArticle.title, actualArticle.title)
         assertEquals(expectedArticle.content, actualArticle.content)
         assertEquals(expectedArticle.previewImage, actualArticle.previewImage)
@@ -256,7 +256,7 @@ class ArticleServiceTest @Autowired constructor(
             )
         )
 
-        val actualArticle = articleService.getArticle(UserPrincipal.create(imaginaryUsers[0]), article.id)
+        val actualArticle = articleService.getArticle(imaginaryUsers[0].id, article.id)
         assertEquals(actualArticle.access.accessType, AccessType.PRIVATE)
         assertEquals(actualArticle.access.users, listOf<User>())
     }
