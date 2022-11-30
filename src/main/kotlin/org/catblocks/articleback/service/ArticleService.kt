@@ -56,20 +56,21 @@ class ArticleService(
         )
     }
 
-    fun getArticle(user: UserPrincipal?, id: Long): Article {
+    fun getArticle(userId: String?, id: Long): Article {
         val article = articleRepository.findById(id).orElseThrow {
             ResponseStatusException(HttpStatus.NOT_FOUND, "Article with id $id not found")
         }
-        if (article.author.id == user?.id) {
+        if (article.author.id == userId) {
             return article
         }
         return when (article.access.accessType) {
             AccessType.PUBLIC -> article
-            AccessType.CUSTOM -> if (user !== null && article.access.users.any { it.id == user.id }) {
+            AccessType.CUSTOM -> if (userId !== null && article.access.users.any { it.id == userId }) {
                 article
             } else {
                 throw ResponseStatusException(HttpStatus.NOT_FOUND, "Article with id $id not found")
             }
+
             AccessType.PRIVATE -> throw ResponseStatusException(HttpStatus.NOT_FOUND, "Article with id $id not found")
         }
     }

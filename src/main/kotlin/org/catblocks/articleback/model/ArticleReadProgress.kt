@@ -11,6 +11,8 @@ class ArticleReadProgress(
     var id: Long,
     @ManyToOne
     var article: Article,
-    var progress: Int, // number from 1 to 100 (percent)
-    var duration: Duration,
+    @ManyToOne
+    val user: User,
+    var progress: Int = 0, // number from 1 to 100 (percent)
+    var duration: Duration = Duration.ZERO,
 )

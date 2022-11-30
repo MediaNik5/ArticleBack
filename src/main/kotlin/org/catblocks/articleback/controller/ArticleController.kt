@@ -49,7 +49,7 @@ class ArticleController(
         @AuthenticationPrincipal user: UserPrincipal?,
         @PathVariable id: Long,
     ): ArticleResponse {
-        return articleService.getArticle(user, id).toDto()
+        return articleService.getArticle(user?.id, id).toDto()
     }
 
     @PutMapping("/{id}")
