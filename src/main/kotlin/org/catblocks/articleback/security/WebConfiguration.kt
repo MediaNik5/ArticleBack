@@ -79,7 +79,7 @@ class WebConfiguration(
             .failureHandler(failureHandler)
             .and()
             .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
-            .addFilter(SetHostFilter())
+//            .addFilterBefore(SetHostFilter())
     }
 
     @Bean

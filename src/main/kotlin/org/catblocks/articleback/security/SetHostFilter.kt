@@ -1,6 +1,7 @@
 package org.catblocks.articleback.security
 
 import org.springframework.core.annotation.Order
+import org.springframework.stereotype.Component
 import java.util.*
 import javax.servlet.Filter
 import javax.servlet.FilterChain
@@ -9,6 +10,7 @@ import javax.servlet.ServletResponse
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletRequestWrapper
 
+@Component
 @Order(Int.MAX_VALUE)
 class SetHostFilter : Filter {
     override fun doFilter(request: ServletRequest?, response: ServletResponse?, chain: FilterChain?) {
