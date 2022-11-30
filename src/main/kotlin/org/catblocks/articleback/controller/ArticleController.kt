@@ -18,7 +18,7 @@ class ArticleController(
         @AuthenticationPrincipal user: UserPrincipal,
         @RequestBody article: NewArticleRequest,
     ) : ArticleResponse {
-        return articleService.createArticle(user, article).toDto()
+        return articleService.createArticle(user.id, article).toDto()
     }
 
     @Suppress("NAME_SHADOWING")
@@ -34,7 +34,7 @@ class ArticleController(
         val page = page ?: 0
         val size = size ?: 10
         val articles = articleService.getArticles(
-            user,
+            user.id,
             sortBy ?: SortBy.CREATED,
             sortDirection ?: Sort.Direction.DESC,
             page,
@@ -59,7 +59,7 @@ class ArticleController(
         @PathVariable id: Long,
         @RequestBody article: UpdateArticleRequest,
     ) {
-        articleService.updateArticle(user, id, article)
+        articleService.updateArticle(user.id, id, article)
     }
 
     @DeleteMapping("/{id}")
@@ -68,7 +68,7 @@ class ArticleController(
         @AuthenticationPrincipal user: UserPrincipal,
         @PathVariable id: Long,
     ) {
-        articleService.deleteArticle(user, id)
+        articleService.deleteArticle(user.id, id)
     }
 
     @PutMapping("/{id}/access")
@@ -78,6 +78,6 @@ class ArticleController(
         @PathVariable id: Long,
         @RequestBody newAccess: UpdateArticleAccessRequest,
     ) {
-        articleService.updateAccess(user, id, newAccess)
+        articleService.updateAccess(user.id, id, newAccess)
     }
 }

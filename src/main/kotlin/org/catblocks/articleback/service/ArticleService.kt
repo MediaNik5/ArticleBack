@@ -9,7 +9,6 @@ import org.catblocks.articleback.model.Article
 import org.catblocks.articleback.model.ArticleAccess
 import org.catblocks.articleback.repository.ArticleRepository
 import org.catblocks.articleback.repository.UserRepository
-import org.catblocks.articleback.security.UserPrincipal
 import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
@@ -21,14 +20,14 @@ class ArticleService(
     private val articleRepository: ArticleRepository,
     private val userRepository: UserRepository,
 ) {
-    fun createArticle(user: UserPrincipal, article: NewArticleRequest): Article {
+    fun createArticle(userId: String, article: NewArticleRequest): Article {
         return articleRepository.save(
             Article(
                 id = 0L,
                 title = article.title,
                 content = article.content,
                 previewImage = article.previewImage,
-                author = userRepository.getReferenceById(user.id),
+                author = userRepository.getReferenceById(userId),
                 created = LocalDateTime.now(),
                 updated = LocalDateTime.now(),
                 access = ArticleAccess(
@@ -41,14 +40,14 @@ class ArticleService(
     }
 
     fun getArticles(
-        user: UserPrincipal,
+        userId: String,
         sortBy: SortBy,
         sortDirection: Sort.Direction,
         page: Int,
         size: Int,
     ): List<Article> {
         return articleRepository.findAll(
-            userRepository.getReferenceById(user.id),
+            userRepository.getReferenceById(userId),
             sortBy,
             sortDirection,
             page,
@@ -75,8 +74,8 @@ class ArticleService(
         }
     }
 
-    fun updateArticle(user: UserPrincipal, id: Long, updatedArticle: UpdateArticleRequest) {
-        val article = articleRepository.findByIdAndAuthor(id, userRepository.getReferenceById(user.id))
+    fun updateArticle(userId: String, id: Long, updatedArticle: UpdateArticleRequest) {
+        val article = articleRepository.findByIdAndAuthor(id, userRepository.getReferenceById(userId))
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Article with id $id not found")
         articleRepository.save(
             article.copy(
@@ -88,14 +87,14 @@ class ArticleService(
         )
     }
 
-    fun deleteArticle(user: UserPrincipal, id: Long) {
-        val article = articleRepository.findByIdAndAuthor(id, userRepository.getReferenceById(user.id))
+    fun deleteArticle(userId: String, id: Long) {
+        val article = articleRepository.findByIdAndAuthor(id, userRepository.getReferenceById(userId))
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Article with id $id not found")
         articleRepository.delete(article)
     }
 
-    fun updateAccess(user: UserPrincipal, id: Long, newAccess: UpdateArticleAccessRequest) {
-        val article = articleRepository.findByIdAndAuthor(id, userRepository.getReferenceById(user.id))
+    fun updateAccess(userId: String, id: Long, newAccess: UpdateArticleAccessRequest) {
+        val article = articleRepository.findByIdAndAuthor(id, userRepository.getReferenceById(userId))
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Article with id $id not found")
         article.access.accessType = newAccess.access
         article.access.users = newAccess.users.map { userRepository.getReferenceById(it) }

@@ -11,7 +11,6 @@ import org.catblocks.articleback.model.User
 import org.catblocks.articleback.repository.ArticleRepository
 import org.catblocks.articleback.repository.UserRepository
 import org.catblocks.articleback.security.Provider
-import org.catblocks.articleback.security.UserPrincipal
 import org.catblocks.articleback.service.ArticleService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -103,7 +102,7 @@ class ArticleServiceTest @Autowired constructor(
     @Test
     fun `given articles by user, when asked for all articles, then return complete articles list`() {
         val articles = articleService.getArticles(
-            UserPrincipal.create(imaginaryUsers[0]),
+            imaginaryUsers[0].id,
             SortBy.CREATED,
             Sort.Direction.DESC,
             0,
@@ -132,8 +131,8 @@ class ArticleServiceTest @Autowired constructor(
             "Content of newly created article",
             "url4",
         )
-        val (id, ) = articleService.createArticle(
-            UserPrincipal.create(imaginaryUsers[0]),
+        val (id) = articleService.createArticle(
+            imaginaryUsers[0].id,
             expectedArticle
         )
 
@@ -214,7 +213,7 @@ class ArticleServiceTest @Autowired constructor(
         )
 
         articleService.updateArticle(
-            UserPrincipal.create(imaginaryUsers[0]),
+            imaginaryUsers[0].id,
             expectedArticle.id,
             UpdateArticleRequest(expectedArticle.title, expectedArticle.content, expectedArticle.previewImage)
         )
@@ -230,16 +229,16 @@ class ArticleServiceTest @Autowired constructor(
     @Test
     fun `given unexisting article, when asked to delete it, throw exception`(){
         assertThrows(ResponseStatusException::class.java, {
-            articleService.deleteArticle(UserPrincipal.create(imaginaryUsers[0]), -1L)
+            articleService.deleteArticle(imaginaryUsers[0].id, -1L)
         }, "Article with id $id not found")
     }
 
     @Test
     fun `given article, when delete it and asked for it, throw exception`(){
         val article = articleRepository.findAll().first()
-        articleService.deleteArticle(UserPrincipal.create(imaginaryUsers[0]), article.id)
+        articleService.deleteArticle(imaginaryUsers[0].id, article.id)
         assertThrows(ResponseStatusException::class.java, {
-            articleService.deleteArticle(UserPrincipal.create(imaginaryUsers[0]), article.id)
+            articleService.deleteArticle(imaginaryUsers[0].id, article.id)
         }, { "Article with id $id not found" })
     }
 
@@ -248,7 +247,7 @@ class ArticleServiceTest @Autowired constructor(
     fun `given article, when changed its access, then changes save`(){
         val article = articleRepository.findByAccess_AccessType(AccessType.PUBLIC).first()
         articleService.updateAccess(
-            UserPrincipal.create(imaginaryUsers[0]),
+            imaginaryUsers[0].id,
             article.id,
             UpdateArticleAccessRequest(
                 AccessType.PRIVATE,
@@ -265,7 +264,7 @@ class ArticleServiceTest @Autowired constructor(
     fun `given nonexisting article, when change its access, then throw exception`(){
         assertThrows(ResponseStatusException::class.java) {
             articleService.updateAccess(
-                UserPrincipal.create(imaginaryUsers[0]),
+                imaginaryUsers[0].id,
                 -1L,
                 UpdateArticleAccessRequest(
                     AccessType.PRIVATE,
