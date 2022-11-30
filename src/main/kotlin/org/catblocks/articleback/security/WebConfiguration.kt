@@ -29,6 +29,7 @@ class WebConfiguration(
     private val successHandler: OAuth2AuthenticationSuccessHandler,
     private val failureHandler: OAuth2AuthenticationFailureHandler,
     private val tokenAuthenticationFilter: TokenAuthenticationFilter,
+    private val setHostFilter: SetHostFilter,
 ) : WebSecurityConfigurerAdapter() {
 
     @Throws(Exception::class)
@@ -79,7 +80,7 @@ class WebConfiguration(
             .failureHandler(failureHandler)
             .and()
             .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
-            .addFilterBefore(SetHostFilter(), CorsFilter::class.java)
+            .addFilterBefore(setHostFilter, CorsFilter::class.java)
     }
 
     @Bean
