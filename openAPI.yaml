@@ -203,6 +203,36 @@ paths:
             have access to this article
       security:
         - bearerAuth: [ ]
+  /articles-statistics/{articleId}/read-progress-self:
+    get:
+      tags:
+        - article-statistics
+      summary: Get read progress for current user
+      description: Get read progress for current user
+      operationId: getReadProgressForCurrentUser
+      parameters:
+        - in: path
+          name: articleId
+          schema:
+            type: integer
+            format: int64
+          required: true
+      responses:
+        '200':
+          description: Article statistics are retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArticleReadProgressResponse'
+        '400':
+          description: Invalid request
+        '404':
+          description:
+            Requested article is not found. It might be the case when current user does not
+            have access to this article
+      security:
+        - bearerAuth: [ ]
+
   /articles-statistics/{articleId}/read-progress:
     get:
       tags:
@@ -263,8 +293,8 @@ paths:
     get:
       tags:
         - article-statistics
-      summary: Get article reactions
-      description: Get article reactions
+      summary: Get all article reactions
+      description: Get all article reactions.
       operationId: getArticleReactions
       parameters:
         - in: path
@@ -275,11 +305,64 @@ paths:
           required: true
       responses:
         '200':
-          description: Article statistics are retrieved successfully
+          description: Article reactions are retrieved successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ArticleReactionsResponse'
+        '400':
+          description: Invalid request
+        '404':
+          description:
+            Requested article is not found. It might be the case when current user does not
+            have access to this article
+      security:
+        - bearerAuth: [ ]
+  /articles-statistics/{articleId}/reaction:
+    get:
+      tags:
+        - article-statistics
+      summary: Get your own article reaction
+      description: Get your own set article reaction
+      operationId: getArticleReactions
+      parameters:
+        - in: path
+          name: articleId
+          schema:
+            type: integer
+            format: int64
+          required: true
+      responses:
+        '200':
+          description: Article reaction was retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SingleUserArticleReactionResponse'
+        '400':
+          description: Invalid request
+        '404':
+          description:
+            Requested article is not found or either reaction was not set.
+            It might be the case when current user does not have access to this article
+      security:
+        - bearerAuth: [ ]
+    delete:
+      tags:
+        - article-statistics
+      summary: Delete your own article reaction
+      description: Delete your own set article reaction. Available only if reaction was set.
+      operationId: deleteArticleReactions
+      parameters:
+        - in: path
+          name: articleId
+          schema:
+            type: integer
+            format: int64
+          required: true
+      responses:
+        '200':
+          description: Article reaction was deleted successfully
         '400':
           description: Invalid request
         '404':
@@ -293,7 +376,7 @@ paths:
         - article-statistics
       summary: Set article reaction
       description:
-        Sets article reaction by current user. If the reaction was already set, it 
+        Sets article reaction by current user. If the reaction was already set, it
         will be deleted by calling this method
       operationId: setArticleReaction
       parameters:
@@ -464,6 +547,17 @@ components:
           type: integer
           format: int64
           description: Article update date in milliseconds from EPOCH
+    ArticleReadProgressResponse:
+      type: object
+      properties:
+        readProgress:
+          type: integer
+          format: int32
+          description: Read progress in percents
+        duration:
+          type: integer
+          format: int32
+          description: Read duration in millis
     ArticleReadProgressesResponse:
       type: object
       properties:
@@ -480,12 +574,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ArticleReadProgressResponse'
-    ArticleReadProgressResponse:
-      type: object
-      properties:
-        readProgress:
-          type: integer
-          format: int32
     ArticleReactionsResponse:
       type: object
       properties:
@@ -493,6 +581,16 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ArticleReactionResponse'
+    SingleUserArticleReactionResponse:
+      type: object
+      properties:
+        reaction:
+          type: integer
+          format: int32
+          description: Emoji that user has reacted with
+        count:
+          type: integer
+          format: int32
     ArticleReactionResponse:
       type: object
       properties:
@@ -528,9 +626,6 @@ components:
     UpdateArticleReadProgressRequest:
       type: object
       properties:
-        articleId:
-          type: integer
-          format: int64
         readProgress:
           type: integer
           format: int32
