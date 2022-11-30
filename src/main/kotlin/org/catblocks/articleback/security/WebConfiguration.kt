@@ -47,6 +47,7 @@ class WebConfiguration(
                 "/error",
                 "/oauth/**",
                 "/oauth2/**",
+                "/authorize/**",
                 "/users/*",
                 "/swagger-ui/index.html",
                 "/swagger-ui/**",
