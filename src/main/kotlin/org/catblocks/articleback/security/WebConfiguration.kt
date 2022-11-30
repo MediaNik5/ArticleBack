@@ -79,6 +79,7 @@ class WebConfiguration(
             .failureHandler(failureHandler)
             .and()
             .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
+            .addFilter(SetHostFilter())
     }
 
     @Bean
@@ -97,7 +98,7 @@ class WebConfiguration(
             )
         )
         config.setAllowedMethods(listOf("GET", "HEAD", "POST", "PUT", "DELETE", "PATCH"))
-        config.setAllowedHeaders(listOf("Content-Types", "Content-Type", "authorization", "x-auth-token"))
+        config.setAllowedHeaders(listOf("Content-Types", "Content-Type", "authorization", "x-auth-token", "Origin"))
         val source = UrlBasedCorsConfigurationSource()
         source.registerCorsConfiguration("/**", config)
         val bean: FilterRegistrationBean<CorsFilter> = FilterRegistrationBean(CorsFilter(source))

@@ -17,11 +17,8 @@ private const val cookieExpireSeconds = 180
 class HttpCookieOAuth2AuthorizationRequestRepository :
         AuthorizationRequestRepository<OAuth2AuthorizationRequest> {
     override fun loadAuthorizationRequest(request: HttpServletRequest): OAuth2AuthorizationRequest? {
-        println("localaddr: ${request.localAddr}")
-        request.headerNames.toList().forEach { println("Header $it: ${request.getHeaders(it).toList()}") }
-        println("Localname: ${request.localName}")
         return request
-            ?.cookies
+            .cookies
             ?.find { it.name == OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME }
             ?.deserialize()
     }
