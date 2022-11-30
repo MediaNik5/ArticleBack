@@ -214,7 +214,7 @@ class ArticleServiceTest @Autowired constructor(
         )
 
         articleService.updateArticle(
-            UserPrincipal.create(imaginaryUsers[0]),
+            imaginaryUsers[0].id,
             expectedArticle.id,
             UpdateArticleRequest(expectedArticle.title, expectedArticle.content, expectedArticle.previewImage)
         )
@@ -230,16 +230,16 @@ class ArticleServiceTest @Autowired constructor(
     @Test
     fun `given unexisting article, when asked to delete it, throw exception`(){
         assertThrows(ResponseStatusException::class.java, {
-            articleService.deleteArticle(UserPrincipal.create(imaginaryUsers[0]), -1L)
+            articleService.deleteArticle(imaginaryUsers[0].id, -1L)
         }, "Article with id $id not found")
     }
 
     @Test
     fun `given article, when delete it and asked for it, throw exception`(){
         val article = articleRepository.findAll().first()
-        articleService.deleteArticle(UserPrincipal.create(imaginaryUsers[0]), article.id)
+        articleService.deleteArticle(imaginaryUsers[0].id, article.id)
         assertThrows(ResponseStatusException::class.java, {
-            articleService.deleteArticle(UserPrincipal.create(imaginaryUsers[0]), article.id)
+            articleService.deleteArticle(imaginaryUsers[0].id, article.id)
         }, { "Article with id $id not found" })
     }
 
@@ -248,7 +248,7 @@ class ArticleServiceTest @Autowired constructor(
     fun `given article, when changed its access, then changes save`(){
         val article = articleRepository.findByAccess_AccessType(AccessType.PUBLIC).first()
         articleService.updateAccess(
-            UserPrincipal.create(imaginaryUsers[0]),
+            imaginaryUsers[0].id,
             article.id,
             UpdateArticleAccessRequest(
                 AccessType.PRIVATE,
@@ -265,7 +265,7 @@ class ArticleServiceTest @Autowired constructor(
     fun `given nonexisting article, when change its access, then throw exception`(){
         assertThrows(ResponseStatusException::class.java) {
             articleService.updateAccess(
-                UserPrincipal.create(imaginaryUsers[0]),
+                imaginaryUsers[0].id,
                 -1L,
                 UpdateArticleAccessRequest(
                     AccessType.PRIVATE,

@@ -75,8 +75,8 @@ class ArticleService(
         }
     }
 
-    fun updateArticle(user: UserPrincipal, id: Long, updatedArticle: UpdateArticleRequest) {
-        val article = articleRepository.findByIdAndAuthor(id, userRepository.getReferenceById(user.id))
+    fun updateArticle(userId: String, id: Long, updatedArticle: UpdateArticleRequest) {
+        val article = articleRepository.findByIdAndAuthor(id, userRepository.getReferenceById(userId))
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Article with id $id not found")
         articleRepository.save(
             article.copy(
@@ -88,14 +88,14 @@ class ArticleService(
         )
     }
 
-    fun deleteArticle(user: UserPrincipal, id: Long) {
-        val article = articleRepository.findByIdAndAuthor(id, userRepository.getReferenceById(user.id))
+    fun deleteArticle(userId: String, id: Long) {
+        val article = articleRepository.findByIdAndAuthor(id, userRepository.getReferenceById(userId))
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Article with id $id not found")
         articleRepository.delete(article)
     }
 
-    fun updateAccess(user: UserPrincipal, id: Long, newAccess: UpdateArticleAccessRequest) {
-        val article = articleRepository.findByIdAndAuthor(id, userRepository.getReferenceById(user.id))
+    fun updateAccess(userId: String, id: Long, newAccess: UpdateArticleAccessRequest) {
+        val article = articleRepository.findByIdAndAuthor(id, userRepository.getReferenceById(userId))
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Article with id $id not found")
         article.access.accessType = newAccess.access
         article.access.users = newAccess.users.map { userRepository.getReferenceById(it) }
