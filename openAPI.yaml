@@ -275,7 +275,7 @@ paths:
           required: true
       responses:
         '200':
-          description: Article statistics are retrieved successfully
+          description: Article reactions are retrieved successfully
           content:
             application/json:
               schema:
