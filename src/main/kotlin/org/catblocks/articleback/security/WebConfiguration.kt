@@ -44,12 +44,11 @@ class WebConfiguration(
             .and()
             .authorizeRequests()
             .antMatchers(
-                "/",
                 "/error",
                 "/oauth/**",
                 "/oauth2/**",
-                "/authorize/**",
                 "/users/*",
+                "/articles-statistics/*/reactions",
                 "/swagger-ui/index.html",
                 "/swagger-ui/**",
                 "/v3/api-docs/**"

@@ -1,5 +1,6 @@
 package org.catblocks.articleback.controller
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import org.catblocks.articleback.repository.ReactionCount
 import org.catblocks.articleback.security.UserPrincipal
 import org.catblocks.articleback.service.StatisticsService
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*
 class ArticleStatisticsController(
     private val statisticsService: StatisticsService,
 ) {
+    @SecurityRequirement(name = "Bearer Authentication")
     @PostMapping("/{articleId}/read-progress")
     fun setReadProgress(
         @AuthenticationPrincipal user: UserPrincipal,
@@ -24,6 +26,7 @@ class ArticleStatisticsController(
         )
     }
 
+    @SecurityRequirement(name = "Bearer Authentication")
     @GetMapping("/{articleId}/read-progress-self")
     fun getReadProgress(
         @AuthenticationPrincipal user: UserPrincipal,
@@ -35,6 +38,7 @@ class ArticleStatisticsController(
         ).toDto()
     }
 
+    @SecurityRequirement(name = "Bearer Authentication")
     @GetMapping("/{articleId}/read-progress")
     fun getReadProgresses(
         @AuthenticationPrincipal user: UserPrincipal,
@@ -48,6 +52,7 @@ class ArticleStatisticsController(
         )
     }
 
+    @SecurityRequirement(name = "Bearer Authentication")
     @PostMapping("/{articleId}/reaction")
     fun setReaction(
         @AuthenticationPrincipal user: UserPrincipal,
@@ -61,6 +66,7 @@ class ArticleStatisticsController(
         )
     }
 
+    @SecurityRequirement(name = "Bearer Authentication")
     @GetMapping("/{articleId}/reaction")
     fun getReaction(
         @AuthenticationPrincipal user: UserPrincipal,
@@ -72,6 +78,7 @@ class ArticleStatisticsController(
         )
     }
 
+    @SecurityRequirement(name = "Bearer Authentication")
     @DeleteMapping("/{articleId}/reaction")
     fun deleteReaction(
         @AuthenticationPrincipal user: UserPrincipal,
@@ -85,11 +92,11 @@ class ArticleStatisticsController(
 
     @GetMapping("/{articleId}/reactions")
     fun getReactions(
-        @AuthenticationPrincipal user: UserPrincipal,
+        @AuthenticationPrincipal user: UserPrincipal?,
         @PathVariable articleId: Long,
     ): List<ReactionCount> {
         return statisticsService.getReactions(
-            user.id,
+            user?.id,
             articleId,
         )
     }

@@ -95,7 +95,7 @@ class StatisticsService(
         articleReactionRepository.deleteByUserAndArticle(user, article)
     }
 
-    fun getReactions(userId: String, articleId: Long): List<ReactionCount> {
+    fun getReactions(userId: String?, articleId: Long): List<ReactionCount> {
         val article = articleService.getArticle(userId, articleId)
         return articleReactionRepository.findByArticle(article)
     }

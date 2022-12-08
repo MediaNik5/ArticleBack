@@ -289,6 +289,8 @@ paths:
           description: Invalid request
         '404':
           description: Requested article is not found
+      security:
+        - bearerAuth: [ ]
   /articles-statistics/{articleId}/reactions:
     get:
       tags:
@@ -316,8 +318,6 @@ paths:
           description:
             Requested article is not found. It might be the case when current user does not
             have access to this article
-      security:
-        - bearerAuth: [ ]
   /articles-statistics/{articleId}/reaction:
     get:
       tags:
@@ -418,6 +418,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserResponse'
+      security:
+        - bearerAuth: [ ]
   /users/{userId}:
     get:
       tags:
