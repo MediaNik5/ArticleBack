@@ -7,6 +7,8 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
+servers:
+  - url: https://comgrid.ru/article-api
 tags:
   - name: articles
     description: Everything about articles
