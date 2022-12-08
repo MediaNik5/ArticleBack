@@ -12,7 +12,7 @@ fun List<Article>.toDto(page: Int, size: Int): ArticlesResponse {
                 id = it.id,
                 title = it.title,
                 previewImage = it.previewImage,
-                creatorId = it.author.username,
+                creatorId = it.author.id,
                 created = it.created.toInstant(ZoneOffset.UTC).toEpochMilli(),
                 updated = it.updated.toInstant(ZoneOffset.UTC).toEpochMilli(),
             )
@@ -28,7 +28,7 @@ fun Article.toDto(): ArticleResponse {
         title = title,
         content = content,
         previewImage = previewImage,
-        creatorId = author.username,
+        creatorId = author.id,
         created = created.toInstant(ZoneOffset.UTC).toEpochMilli(),
         updated = updated.toInstant(ZoneOffset.UTC).toEpochMilli(),
     )
