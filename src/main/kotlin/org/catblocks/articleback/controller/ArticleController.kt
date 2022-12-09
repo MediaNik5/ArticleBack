@@ -6,6 +6,7 @@ import org.catblocks.articleback.service.ArticleService
 import org.springframework.data.domain.Sort
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
+import java.time.LocalDateTime
 
 @RestController
 @RequestMapping("/articles")
@@ -22,10 +23,12 @@ class ArticleController(
     }
 
     @Suppress("NAME_SHADOWING")
-    @SecurityRequirement(name = "Bearer Authentication")
     @GetMapping
     fun getArticles(
-        @AuthenticationPrincipal user: UserPrincipal,
+        @AuthenticationPrincipal user: UserPrincipal?,
+        @RequestParam(required = false) creatorId: String?,
+        @RequestParam(required = false) dateFromMillis: Long?,
+        @RequestParam(required = false) dateToMillis: Long?,
         @RequestParam(required = false) sortBy: SortBy?,
         @RequestParam(required = false) sortDirection: Sort.Direction?,
         @RequestParam(required = false) page: Int?,
@@ -33,8 +36,13 @@ class ArticleController(
     ): ArticlesResponse {
         val page = page ?: 0
         val size = size ?: 10
+        val dateFrom = dateFromMillis.toLocalDateTime(ifNull = LocalDateTime.MIN)
+        val dateTo = dateToMillis.toLocalDateTime(ifNull = LocalDateTime.MAX)
         val articles = articleService.getArticles(
-            user.id,
+            creatorId,
+            dateFrom,
+            dateTo,
+            user?.id,
             sortBy ?: SortBy.CREATED,
             sortDirection ?: Sort.Direction.DESC,
             page,
@@ -49,7 +57,7 @@ class ArticleController(
         @AuthenticationPrincipal user: UserPrincipal?,
         @PathVariable id: Long,
     ): ArticleResponse {
-        return articleService.getArticle(user?.id, id).toDto()
+        return articleService.getArticle(id, user?.id).toDto()
     }
 
     @PutMapping("/{id}")

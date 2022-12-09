@@ -2,8 +2,21 @@ package org.catblocks.articleback.controller
 
 import org.catblocks.articleback.model.AccessType
 import org.catblocks.articleback.model.Article
+import java.time.Instant
+import java.time.LocalDateTime
 import java.time.ZoneOffset
+import kotlin.contracts.ExperimentalContracts
 
+
+@Suppress("UNCHECKED_CAST")
+@OptIn(ExperimentalContracts::class)
+fun Long?.toLocalDateTime(ifNull: LocalDateTime): LocalDateTime {
+    if (this == null) {
+        return ifNull
+    }
+    val instant = Instant.ofEpochMilli(this)
+    return LocalDateTime.ofInstant(instant, ZoneOffset.UTC)
+}
 
 fun List<Article>.toDto(page: Int, size: Int): ArticlesResponse {
     return ArticlesResponse(

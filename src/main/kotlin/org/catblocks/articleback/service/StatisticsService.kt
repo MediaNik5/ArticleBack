@@ -75,7 +75,7 @@ class StatisticsService(
     }
 
     fun setReaction(userId: String, articleId: Long, reactionRequest: ReactionRequest) {
-        articleService.getArticle(userId, articleId)
+        articleService.getArticle(articleId, userId)
         articleRepository.findById(articleId)
             .orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND, "Article not found") }
         articleReactionRepository.set(userId, articleId, reactionRequest.reaction)
@@ -83,7 +83,7 @@ class StatisticsService(
 
     fun getReaction(userId: String, articleId: Long): ReactionRequest {
         val user = userRepository.getReferenceById(userId)
-        val article = articleService.getArticle(userId, articleId)
+        val article = articleService.getArticle(articleId, userId)
         val reaction = articleReactionRepository.findByUserAndArticle(user, article)
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Reaction not found")
         return ReactionRequest(reaction.reactionType)
@@ -91,12 +91,12 @@ class StatisticsService(
 
     fun deleteReaction(userId: String, articleId: Long) {
         val user = userRepository.getReferenceById(userId)
-        val article = articleService.getArticle(userId, articleId)
+        val article = articleService.getArticle(articleId, userId)
         articleReactionRepository.deleteByUserAndArticle(user, article)
     }
 
     fun getReactions(userId: String?, articleId: Long): List<ReactionCount> {
-        val article = articleService.getArticle(userId, articleId)
+        val article = articleService.getArticle(articleId, userId)
         return articleReactionRepository.findByArticle(article)
     }
 }

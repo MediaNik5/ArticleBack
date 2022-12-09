@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
+import java.time.LocalDateTime
 import java.util.*
 
 interface ArticleRepository : JpaRepository<Article, Long> {
@@ -19,7 +20,9 @@ interface ArticleRepository : JpaRepository<Article, Long> {
 
     fun findByIdAndAuthor(id: Long, author: User): Article?
     fun findAll(
-        author: User,
+        author: User?,
+        dateFrom: LocalDateTime,
+        dateTo: LocalDateTime,
         sortBy: SortBy,
         sortDirection: Sort.Direction,
         page: Int,
@@ -27,6 +30,8 @@ interface ArticleRepository : JpaRepository<Article, Long> {
     ): List<Article> {
         return findAllByAuthor(
             author,
+            dateFrom,
+            dateTo,
             PageRequest.of(
                 page,
                 size,
@@ -38,9 +43,18 @@ interface ArticleRepository : JpaRepository<Article, Long> {
         )
     }
 
-    @Query("SELECT a FROM Article a WHERE a.author = :author")
+    @Query(
+        """
+        SELECT a FROM Article a 
+            WHERE (:author is null or a.author = :author) and
+            a.created >= :dateFrom and
+            a.created <= :dateTo
+        """
+    )
     fun findAllByAuthor(
-        author: User,
+        author: User?,
+        dateFrom: LocalDateTime,
+        dateTo: LocalDateTime,
         pageable: Pageable,
     ): List<Article>
 }

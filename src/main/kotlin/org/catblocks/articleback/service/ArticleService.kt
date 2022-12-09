@@ -40,22 +40,35 @@ class ArticleService(
     }
 
     fun getArticles(
-        userId: String,
+        creatorId: String?,
+        dateFrom: LocalDateTime,
+        dateTo: LocalDateTime,
+        currentUserId: String?,
         sortBy: SortBy,
         sortDirection: Sort.Direction,
         page: Int,
         size: Int,
     ): List<Article> {
-        return articleRepository.findAll(
-            userRepository.getReferenceById(userId),
+        val articles = articleRepository.findAll(
+            if (creatorId != null) userRepository.getReferenceById(creatorId) else null,
+            dateFrom,
+            dateTo,
             sortBy,
             sortDirection,
             page,
             size,
         )
+
+        return articles.filter { article ->
+            when (article.access.accessType) {
+                AccessType.PUBLIC -> true
+                AccessType.PRIVATE -> article.author.id == currentUserId
+                AccessType.CUSTOM -> currentUserId != null && article.access.users.any { it.id == currentUserId }
+            }
+        }
     }
 
-    fun getArticle(userId: String?, id: Long): Article {
+    fun getArticle(id: Long, userId: String? = null): Article {
         val article = articleRepository.findById(id).orElseThrow {
             ResponseStatusException(HttpStatus.NOT_FOUND, "Article with id $id not found")
         }
