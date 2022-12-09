@@ -9,7 +9,7 @@ import java.util.stream.Collectors
 @Service
 class DefaultUserInfoExtractor : UserInfoExtractor {
     override fun canProceed(registrationId: String): Boolean {
-        return AUTH_PROVIDERS.contains(registrationId.uppercase())
+        return AUTH_PROVIDERS.contains(registrationId)
     }
 
     override fun extract(o: Map<String, Any?>, userRequest: OAuth2UserRequest): Map<String, Any?> {
