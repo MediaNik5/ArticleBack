@@ -45,6 +45,7 @@ class WebConfiguration(
             .authorizeRequests()
             .antMatchers(
                 "/error",
+                "/articles",
                 "/oauth/**",
                 "/oauth2/**",
                 "/users/*",
