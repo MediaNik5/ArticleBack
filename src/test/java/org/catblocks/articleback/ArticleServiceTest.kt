@@ -107,7 +107,7 @@ class ArticleServiceTest @Autowired constructor(
             0,
             10,
         )
-        assertArticlesEqualByContent(articles, imaginaryArticles)
+        assertArticlesEqualByContent(articles.content, imaginaryArticles)
     }
 
     private fun assertArticlesEqualByContent(articles: List<Article>, articles2: List<Article>) {
