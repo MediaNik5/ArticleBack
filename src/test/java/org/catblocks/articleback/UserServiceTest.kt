@@ -1,8 +1,8 @@
 package org.catblocks.articleback
 
+import org.catblocks.articleback.model.Provider
 import org.catblocks.articleback.model.User
 import org.catblocks.articleback.repository.UserRepository
-import org.catblocks.articleback.security.Provider
 import org.catblocks.articleback.service.UserService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach

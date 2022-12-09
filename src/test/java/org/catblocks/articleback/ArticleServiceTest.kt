@@ -4,13 +4,9 @@ import org.catblocks.articleback.controller.NewArticleRequest
 import org.catblocks.articleback.controller.SortBy
 import org.catblocks.articleback.controller.UpdateArticleAccessRequest
 import org.catblocks.articleback.controller.UpdateArticleRequest
-import org.catblocks.articleback.model.AccessType
-import org.catblocks.articleback.model.Article
-import org.catblocks.articleback.model.ArticleAccess
-import org.catblocks.articleback.model.User
+import org.catblocks.articleback.model.*
 import org.catblocks.articleback.repository.ArticleRepository
 import org.catblocks.articleback.repository.UserRepository
-import org.catblocks.articleback.security.Provider
 import org.catblocks.articleback.service.ArticleService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -103,6 +99,9 @@ class ArticleServiceTest @Autowired constructor(
     fun `given articles by user, when asked for all articles, then return complete articles list`() {
         val articles = articleService.getArticles(
             imaginaryUsers[0].id,
+            LocalDateTime.MIN,
+            LocalDateTime.MAX,
+            imaginaryUsers[0].id,
             SortBy.CREATED,
             Sort.Direction.DESC,
             0,
@@ -136,7 +135,7 @@ class ArticleServiceTest @Autowired constructor(
             expectedArticle
         )
 
-        val actualArticle = articleService.getArticle(imaginaryUsers[0].id, id)
+        val actualArticle = articleService.getArticle(id, imaginaryUsers[0].id)
 
         assertEquals(actualArticle.title, expectedArticle.title)
         assertEquals(actualArticle.content, expectedArticle.content)
@@ -144,7 +143,7 @@ class ArticleServiceTest @Autowired constructor(
     }
 
     @Test
-    fun `given article, update should be more or equal to created`(){
+    fun `given article, update should be more or equal to created`() {
         val all = articleRepository.findAll()
         for (article in all) {
             assert(article.updated >= article.created)
@@ -155,14 +154,14 @@ class ArticleServiceTest @Autowired constructor(
     fun `given own article, when asked for it, return article`() {
         val expectedArticle = articleRepository.findAll().first()
         assertDoesNotThrow {
-            articleService.getArticle(imaginaryUsers[0].id, expectedArticle.id)
+            articleService.getArticle(expectedArticle.id, imaginaryUsers[0].id)
         }
     }
 
     @Test
-    fun `given unexisting article, when asked for it, throw exception`(){
+    fun `given unexisting article, when asked for it, throw exception`() {
         assertThrows(ResponseStatusException::class.java) {
-            articleService.getArticle(null, -1L)
+            articleService.getArticle(-1L, null)
         }
     }
 
@@ -170,27 +169,26 @@ class ArticleServiceTest @Autowired constructor(
     fun `given public article, when asked for article by id by unauthorized user, return it`() {
         val expectedArticle = articleRepository.findByAccess_AccessType(AccessType.PUBLIC).first()
         assertDoesNotThrow {
-            articleService.getArticle(null, expectedArticle.id)
+            articleService.getArticle(expectedArticle.id, null)
         }
     }
 
     @Test
     fun `given private article, when asked for article by id by unauthorized user, throw exception`() {
         val expectedArticle = articleRepository.findByAccess_AccessType(AccessType.PRIVATE).first()
-        assertThrows(ResponseStatusException::class.java,  {
-            articleService.getArticle(null, expectedArticle.id)
-        }, { "Article with id $id not found" } )
+        assertThrows(ResponseStatusException::class.java, {
+            articleService.getArticle(expectedArticle.id, null)
+        }, { "Article with id $id not found" })
     }
 
     @Test
     @Transactional
     fun `given custom article with one user allowed, when asked for article by id by unauthorized user, throw exception`() {
         val expectedArticle = articleRepository
-            .findByAccess_AccessType(AccessType.CUSTOM).
-            first{ it.access.users.isEmpty() }
-        assertThrows(ResponseStatusException::class.java,  {
-            articleService.getArticle(null, expectedArticle.id)
-        }, { "Article with id $id not found" } )
+            .findByAccess_AccessType(AccessType.CUSTOM).first { it.access.users.isEmpty() }
+        assertThrows(ResponseStatusException::class.java, {
+            articleService.getArticle(expectedArticle.id, null)
+        }, { "Article with id $id not found" })
     }
 
     @Test
@@ -198,14 +196,14 @@ class ArticleServiceTest @Autowired constructor(
     fun `given custom article with one user allowed, when asked for article by id by that user, return it`() {
         val expectedArticle = articleRepository
             .findByAccess_AccessType(AccessType.CUSTOM)
-            .first{ it.access.users.isNotEmpty() }
+            .first { it.access.users.isNotEmpty() }
         assertDoesNotThrow {
-            articleService.getArticle(imaginaryUsers[1].id, expectedArticle.id)
+            articleService.getArticle(expectedArticle.id, imaginaryUsers[1].id)
         }
     }
 
     @Test
-    fun `given article, when update it, then changes have to be saved`(){
+    fun `given article, when update it, then changes have to be saved`() {
         val expectedArticle = articleRepository.findAll().first().copy(
             title = "New title for article",
             content = "new content for article",
@@ -218,7 +216,7 @@ class ArticleServiceTest @Autowired constructor(
             UpdateArticleRequest(expectedArticle.title, expectedArticle.content, expectedArticle.previewImage)
         )
 
-        val actualArticle = articleService.getArticle(imaginaryUsers[0].id, expectedArticle.id)
+        val actualArticle = articleService.getArticle(expectedArticle.id, imaginaryUsers[0].id)
         assertEquals(expectedArticle.title, actualArticle.title)
         assertEquals(expectedArticle.content, actualArticle.content)
         assertEquals(expectedArticle.previewImage, actualArticle.previewImage)
@@ -227,14 +225,14 @@ class ArticleServiceTest @Autowired constructor(
     }
 
     @Test
-    fun `given unexisting article, when asked to delete it, throw exception`(){
+    fun `given unexisting article, when asked to delete it, throw exception`() {
         assertThrows(ResponseStatusException::class.java, {
             articleService.deleteArticle(imaginaryUsers[0].id, -1L)
         }, "Article with id $id not found")
     }
 
     @Test
-    fun `given article, when delete it and asked for it, throw exception`(){
+    fun `given article, when delete it and asked for it, throw exception`() {
         val article = articleRepository.findAll().first()
         articleService.deleteArticle(imaginaryUsers[0].id, article.id)
         assertThrows(ResponseStatusException::class.java, {
@@ -244,7 +242,7 @@ class ArticleServiceTest @Autowired constructor(
 
     @Test
     @Transactional
-    fun `given article, when changed its access, then changes save`(){
+    fun `given article, when changed its access, then changes save`() {
         val article = articleRepository.findByAccess_AccessType(AccessType.PUBLIC).first()
         articleService.updateAccess(
             imaginaryUsers[0].id,
@@ -255,13 +253,13 @@ class ArticleServiceTest @Autowired constructor(
             )
         )
 
-        val actualArticle = articleService.getArticle(imaginaryUsers[0].id, article.id)
+        val actualArticle = articleService.getArticle(article.id, imaginaryUsers[0].id)
         assertEquals(actualArticle.access.accessType, AccessType.PRIVATE)
         assertEquals(actualArticle.access.users, listOf<User>())
     }
 
     @Test
-    fun `given nonexisting article, when change its access, then throw exception`(){
+    fun `given nonexisting article, when change its access, then throw exception`() {
         assertThrows(ResponseStatusException::class.java) {
             articleService.updateAccess(
                 imaginaryUsers[0].id,
