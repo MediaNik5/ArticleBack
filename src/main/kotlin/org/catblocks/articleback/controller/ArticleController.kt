@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 @RestController
 @RequestMapping("/articles")
@@ -36,8 +37,8 @@ class ArticleController(
     ): ArticlesResponse {
         val page = page ?: 0
         val size = size ?: 10
-        val dateFrom = dateFromMillis.toLocalDateTime(ifNull = LocalDateTime.MIN)
-        val dateTo = dateToMillis.toLocalDateTime(ifNull = LocalDateTime.MAX)
+        val dateFrom = dateFromMillis.toLocalDateTime(ifNull = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC))
+        val dateTo = dateToMillis.toLocalDateTime(ifNull = LocalDateTime.now())
         val articles = articleService.getArticles(
             creatorId,
             dateFrom,
