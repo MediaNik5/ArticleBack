@@ -1,9 +1,6 @@
 package org.catblocks.articleback.service
 
-import org.catblocks.articleback.controller.NewArticleRequest
-import org.catblocks.articleback.controller.SortBy
-import org.catblocks.articleback.controller.UpdateArticleAccessRequest
-import org.catblocks.articleback.controller.UpdateArticleRequest
+import org.catblocks.articleback.controller.*
 import org.catblocks.articleback.model.AccessType
 import org.catblocks.articleback.model.Article
 import org.catblocks.articleback.model.ArticleAccess
@@ -48,7 +45,7 @@ class ArticleService(
         sortDirection: Sort.Direction,
         page: Int,
         size: Int,
-    ): List<Article> {
+    ): PageableResponse<List<Article>> {
         val articles = articleRepository.findAll(
             if (creatorId != null) userRepository.getReferenceById(creatorId) else null,
             dateFrom,
@@ -59,13 +56,19 @@ class ArticleService(
             size,
         )
 
-        return articles.filter { article ->
+        val maxSize = articleRepository.countAllByAuthor(
+            if (creatorId != null) userRepository.getReferenceById(creatorId) else null,
+            dateFrom,
+            dateTo,
+        )
+
+        return PageableResponse(articles.filter { article ->
             when (article.access.accessType) {
                 AccessType.PUBLIC -> true
                 AccessType.PRIVATE -> article.author.id == currentUserId
                 AccessType.CUSTOM -> currentUserId != null && article.access.users.any { it.id == currentUserId }
             }
-        }
+        }, maxSize)
     }
 
     fun getArticle(id: Long, userId: String? = null): Article {

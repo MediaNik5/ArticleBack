@@ -57,4 +57,18 @@ interface ArticleRepository : JpaRepository<Article, Long> {
         dateTo: LocalDateTime,
         pageable: Pageable,
     ): List<Article>
+
+    @Query(
+        """
+        SELECT count(a) FROM Article a 
+            WHERE (:author is null or a.author = :author) and
+            a.created >= :dateFrom and
+            a.created <= :dateTo
+        """
+    )
+    fun countAllByAuthor(
+        author: User?,
+        dateFrom: LocalDateTime,
+        dateTo: LocalDateTime,
+    ): Int
 }

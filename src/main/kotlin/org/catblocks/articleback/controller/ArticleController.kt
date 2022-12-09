@@ -50,7 +50,7 @@ class ArticleController(
             size,
         )
 
-        return articles.toDto(page, size)
+        return articles.content.toDto(page, articles.maxSize)
     }
 
     @GetMapping("/{id}")

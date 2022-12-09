@@ -18,7 +18,7 @@ fun Long?.toLocalDateTime(ifNull: LocalDateTime): LocalDateTime {
     return LocalDateTime.ofInstant(instant, ZoneOffset.UTC)
 }
 
-fun List<Article>.toDto(page: Int, size: Int): ArticlesResponse {
+fun List<Article>.toDto(page: Int, maxSize: Int): ArticlesResponse {
     return ArticlesResponse(
         map {
             ShortArticleResponse(
@@ -31,9 +31,14 @@ fun List<Article>.toDto(page: Int, size: Int): ArticlesResponse {
             )
         },
         page,
-        size,
+        maxSize,
     )
 }
+
+data class PageableResponse<T>(
+    val content: T,
+    val maxSize: Int,
+)
 
 fun Article.toDto(): ArticleResponse {
     return ArticleResponse(
@@ -50,7 +55,7 @@ fun Article.toDto(): ArticleResponse {
 data class ArticlesResponse(
     val articles: List<ShortArticleResponse>,
     val page: Int,
-    val size: Int,
+    val maxSize: Int,
 )
 
 data class ShortArticleResponse(

@@ -53,7 +53,7 @@ paths:
         Get all articles, that are available to current user, including private and custom ones.
         If current user is not authorized, returns all public articles.
         You might specify creatorId, dateFrom, dateTo, sortBy, page, size,
-        sortDirection clauses to specify articles.
+        sortDirection query params.
       operationId: getAllArticles
       parameters:
         - in: query
@@ -538,9 +538,10 @@ components:
         page:
           type: integer
           format: int32
-        size:
+        maxSize:
           type: integer
           format: int32
+          description: Total amount of articles that suit the request
     ShortArticleResponse:
       type: object
       properties:
