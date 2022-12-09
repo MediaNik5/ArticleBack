@@ -95,7 +95,8 @@ class WebConfiguration(
                 "http://localhost:3001",
                 "http://localhost:8080",
                 "http://localhost:8000",
-                "https://restless-escape-632568.postman.co"
+                "https://restless-escape-632568.postman.co",
+                "https://editor.swagger.io/",
             )
         )
         config.setAllowedMethods(listOf("GET", "HEAD", "POST", "PUT", "DELETE", "PATCH"))
