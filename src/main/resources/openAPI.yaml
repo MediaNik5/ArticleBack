@@ -23,7 +23,7 @@ paths:
         - articles
       summary: Create new article
       description:
-        Create new article. Only available for authorized users.
+        Create new article with private access. Only available for authorized users.
       operationId: createArticle
       requestBody:
         description: Create new article
