@@ -23,6 +23,7 @@ class HttpCookieOAuth2AuthorizationRequestRepository :
             ?.deserialize()
     }
 
+    @Deprecated("Deprecated in Java", ReplaceWith("loadAuthorizationRequest(request)"))
     override fun removeAuthorizationRequest(request: HttpServletRequest): OAuth2AuthorizationRequest? {
         return loadAuthorizationRequest(request)
     }

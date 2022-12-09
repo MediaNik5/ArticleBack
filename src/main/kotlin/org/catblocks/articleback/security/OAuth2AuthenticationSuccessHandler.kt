@@ -1,5 +1,7 @@
-package org.catblocks.articleback.security.token
+package org.catblocks.articleback.security
 
+import org.catblocks.articleback.security.token.REDIRECT_URI_PARAM_COOKIE_NAME
+import org.catblocks.articleback.security.token.TokenProvider
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.Authentication
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler
@@ -47,7 +49,6 @@ class OAuth2AuthenticationSuccessHandler(
 
     private fun isAuthorizedRedirectUri(uri: String): Boolean {
         val clientRedirectUri = URI.create(uri)
-        println(authorizedRedirectUris)
         return authorizedRedirectUris
             .any { authorizedRedirectUri: String ->
                 // Only validate host and port. Let the clients use different paths if they want to

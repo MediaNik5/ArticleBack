@@ -1,5 +1,6 @@
 package org.catblocks.articleback.security
 
+import org.catblocks.articleback.model.Provider
 import org.catblocks.articleback.model.User
 import org.catblocks.articleback.repository.UserRepository
 import org.catblocks.articleback.security.OAuth2UserInfoFactory.getOAuth2UserInfo

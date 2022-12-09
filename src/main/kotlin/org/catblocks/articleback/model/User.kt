@@ -1,6 +1,5 @@
 package org.catblocks.articleback.model
 
-import org.catblocks.articleback.security.Provider
 import javax.persistence.Entity
 import javax.persistence.Id
 import javax.persistence.Table

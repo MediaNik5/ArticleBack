@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class RequestConverter(
-    @param:Autowired private val requestConverters: List<Converter<RequestEntity<*>>>,
+    @param:Autowired private val requestConverters: List<OAuth2Converter>,
 ){
     fun convert(
         userRequest: OAuth2UserRequest

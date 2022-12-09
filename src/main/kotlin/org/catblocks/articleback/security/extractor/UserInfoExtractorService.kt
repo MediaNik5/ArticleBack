@@ -6,11 +6,8 @@ import org.springframework.stereotype.Service
 
 @Service
 class UserInfoExtractorService(
-// autowiring is not supported for Kotlin generic classes
-//    private val userInfoExtractors: List<Extractor<Map<String, Any?>, Map<String, Any?>>>,
+    private val userInfoExtractors: List<UserInfoExtractor>,
 ) {
-    private val userInfoExtractors: List<Extractor<Map<String, Any?>, Map<String, Any?>>> =
-        listOf(DefaultUserInfoExtractor())
 
     fun extract(
         response: ResponseEntity<Map<String, Any?>>,
@@ -18,7 +15,7 @@ class UserInfoExtractorService(
     ): Map<String, Any?> {
         val registrationId = userRequest.clientRegistration.registrationId
         return userInfoExtractors
-            .first { userInfoExtractor: Extractor<Map<String, Any?>, Map<String, Any?>> ->
+            .first { userInfoExtractor: UserInfoExtractor ->
                 userInfoExtractor.canProceed(registrationId)
             }.extract(response.body!!, userRequest)
     }

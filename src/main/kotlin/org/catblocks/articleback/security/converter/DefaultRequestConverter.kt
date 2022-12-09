@@ -1,6 +1,6 @@
 package org.catblocks.articleback.security.converter
 
-import org.catblocks.articleback.security.Provider
+import org.catblocks.articleback.model.Provider
 import org.springframework.http.RequestEntity
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequestEntityConverter
@@ -10,16 +10,16 @@ import java.util.stream.Collectors
 
 private val AUTH_PROVIDERS = Arrays
     .stream(Provider.values())
-    .map { obj: Provider -> obj.toString() }
+    .map { obj: Provider -> obj.toString().lowercase(Locale.getDefault()) }
+    .filter { s: String -> s != "vk" }
     .collect(Collectors.toUnmodifiableSet())
 
 @Service
-class DefaultRequestConverter :
-    Converter<RequestEntity<*>> {
+class DefaultRequestConverter : OAuth2Converter {
     private val defaultConverter = OAuth2UserRequestEntityConverter()
 
     override fun canProceed(registrationId: String): Boolean {
-        return AUTH_PROVIDERS.contains(registrationId.uppercase(Locale.getDefault()))
+        return AUTH_PROVIDERS.contains(registrationId)
     }
 
     override fun extract(userRequest: OAuth2UserRequest): RequestEntity<*> =

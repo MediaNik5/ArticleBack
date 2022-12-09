@@ -22,6 +22,8 @@ private const val INVALID_TOKEN_RESPONSE_ERROR_CODE = "invalid_token_response"
 @Component
 
 class AccessTokenResponseClient : OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> {
+    private val vkConverter: Converter<OAuth2AuthorizationCodeGrantRequest, RequestEntity<*>> =
+        VkAccessTokenRequestConverter()
     private val defaultConverter: Converter<OAuth2AuthorizationCodeGrantRequest, RequestEntity<*>> =
         OAuth2AuthorizationCodeGrantRequestEntityConverter()
     private val restOperations: RestOperations
@@ -37,7 +39,11 @@ class AccessTokenResponseClient : OAuth2AccessTokenResponseClient<OAuth2Authoriz
     override fun getTokenResponse(
         authorizationCodeGrantRequest: OAuth2AuthorizationCodeGrantRequest,
     ): OAuth2AccessTokenResponse {
-        val request: RequestEntity<*> = defaultConverter.convert(authorizationCodeGrantRequest)!!
+        val request: RequestEntity<*> = if (authorizationCodeGrantRequest.clientRegistration.registrationId == "vk") {
+            vkConverter.convert(authorizationCodeGrantRequest)!!
+        } else {
+            defaultConverter.convert(authorizationCodeGrantRequest)!!
+        }
         val response = getResponse(request)
         var tokenResponse = response.body
         if (tokenResponse?.accessToken?.scopes.isNullOrEmpty()) {
