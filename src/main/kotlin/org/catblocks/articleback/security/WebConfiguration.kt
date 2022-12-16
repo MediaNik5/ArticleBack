@@ -91,6 +91,7 @@ class WebConfiguration(
             listOf(
                 "https://comgrid.ru",
                 "https://comgrid.ru:444",
+                "http://localhost:80",
                 "http://localhost:3000",
                 "http://localhost:3001",
                 "http://localhost:8080",
